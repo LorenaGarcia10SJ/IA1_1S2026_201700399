@@ -29,19 +29,25 @@ class MediLogicRepo:
         return f"'{s_escaped}'"
 
     def obtener_enfermedades(self) -> List[str]:
-        sol = self.query_one("enfermedad(L).")
-        if not sol:
-            return []
-        return [str(x) for x in sol["L"]]
-
+        resultado = list(self.prolog.query("enfermedad(E)"))
+        return [r["E"] for r in resultado]
 
     def obtener_sintomas_por_nombre(self, nombre: str) -> Dict[str, Any]:
-        atom = self._to_prolog_atom(nombre)
-        sol = self.query_one(f"sintomas({atom}, S).")
-        if not sol:
-            return {"error": "Enfermedad no encontrada"}
-        return {"enfermedad": nombre, "sintomas": [str(x) for x in sol["S"]]}
 
+        consulta = f"sintomas({nombre}, S)"
+
+        resultado = list(self.prolog.query(consulta))
+
+        if not resultado:
+            return {"error": "Enfermedad no encontrada"}
+
+        sintomas = [r["S"] for r in resultado]
+
+        return {
+            "enfermedad": nombre,
+            "sintomas": sintomas
+        }
+    
     def calcular_afinidad(self, enfermedad: str, sintomas: List[str]) -> float:
         lista_prolog = "[" + ",".join(sintomas) + "]"
         query = f"afinidad({enfermedad}, {lista_prolog}, P)"
@@ -51,24 +57,3 @@ class MediLogicRepo:
             return float(resultado[0]["P"])
         
         return 0.0
-    
-    # POST
-"""     def insertar_producto_persistente(self, nombre: str, precio: int) -> Dict[str, Any]:
-        if precio < 0:
-            return {"error": "El precio no puede ser negativo"}
-
-        atom = self._to_prolog_atom(nombre)
-
-        # 1) Validar existencia
-        exists = self.query_one(f"once(producto({atom})).")
-        if exists is not None:
-            return {"error": "El producto ya existe"}
-
-        with self.prolog_file.open("a", encoding="utf-8") as f:
-            f.write("\n")
-            f.write(f"producto({atom}).\n")
-            f.write(f"precio({atom}, {precio}).\n")
-
-        self._consult_file()
-
-        return {"mensaje": "Producto agregado y guardado", "producto": nombre, "precio": precio} """

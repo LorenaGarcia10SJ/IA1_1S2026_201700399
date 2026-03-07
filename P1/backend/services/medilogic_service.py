@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Any
 from repositories.medilogic_repo import MediLogicRepo
 
 # Aquí se define la lógica de negocio, se encarga de procesar los datos y aplicar reglas de negocio.
@@ -10,7 +10,7 @@ class MediLogicService:
     def obtener_enfermedades(self) -> List[str]:
         return self.repo.obtener_enfermedades()
 
-    def obtener_sintomas_por_nombre(self, nombre: str) -> Dict[str]:
+    def obtener_sintomas_por_nombre(self, nombre: str) -> Dict[str, Any]:
         return self.repo.obtener_sintomas_por_nombre(nombre)
 
     def calcular_afinidad(self, enfermedad: str, sintomas: List[str]) -> float:
