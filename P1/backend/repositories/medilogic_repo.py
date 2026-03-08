@@ -35,7 +35,6 @@ class MediLogicRepo:
     def obtener_sintomas_por_nombre(self, nombre: str) -> Dict[str, Any]:
 
         consulta = f"sintomas({nombre}, S)"
-
         resultado = list(self.prolog.query(consulta))
 
         if not resultado:
@@ -43,10 +42,7 @@ class MediLogicRepo:
 
         sintomas = [r["S"] for r in resultado]
 
-        return {
-            "enfermedad": nombre,
-            "sintomas": sintomas
-        }
+        return { "enfermedad": nombre, "sintomas": sintomas }
     
     def calcular_afinidad(self, enfermedad: str, sintomas: List[str]) -> float:
         lista_prolog = "[" + ",".join(sintomas) + "]"
@@ -57,3 +53,66 @@ class MediLogicRepo:
             return float(resultado[0]["P"])
         
         return 0.0
+    
+    # Obtener medicamentos para una enfermedad --------------------
+    def obtener_medicamentos_por_enfermedad(self, nombre: str):
+        consulta = f"medicamento(M,{nombre})"
+        resultado = list(self.prolog.query(consulta))
+
+        if not resultado:
+            return {"error": "No se encontraron medicamentos para esta enfermedad"}
+
+        medicamentos = [r["M"] for r in resultado]
+
+        return { "enfermedad": nombre, "medicamentos": medicamentos }
+    
+    # Obtener medicamentos recomendados para una enfermedad y alergias del paciente
+    def obtener_medicamentos_recomendados(self, nombre:str, alergias: List[str]):
+        lista_alergias = "[" + ",".join(alergias) + "]"
+        consulta = f"medicamento_recomendado(M,{nombre}, {lista_alergias})"
+        resultado = list(self.prolog.query(consulta))
+
+        if not resultado:
+            return {"error": "No se encontraron medicamentos recomendados para esta enfermedad y alergias"}
+
+        medicamentos = [r["M"] for r in resultado]
+
+        return medicamentos
+    
+
+    # Obtener diagnostico completo
+    def obtener_diagnostico_completo(self, sintomas: List[str], alergias: List[str]) -> List[Dict[str, Any]]:
+        enfermedades = self.obtener_enfermedades()
+        urgencia = self.obtener_nivel_urgencia(sintomas)
+        resultados = []
+
+        for enfermedad in enfermedades:
+            afinidad = self.calcular_afinidad(enfermedad, sintomas)
+            
+            if afinidad > 0:
+                medicamentos = self.obtener_medicamentos_recomendados(enfermedad, alergias)
+               
+                resultados.append({
+                    "enfermedad": enfermedad,
+                    "afinidad": afinidad,
+                    "medicamentos": medicamentos
+                })
+
+        resultados.sort(key=lambda x: x["afinidad"], reverse=True)
+
+        return {"urgencia": urgencia, "diagnosticos": resultados}
+        
+    
+    # Obtener nivel de severidad de un sintoma
+    def obtener_nivel_urgencia(self, sintomas: List[str]):
+
+        lista_prolog = "[" + ",".join(sintomas) + "]"
+
+        consulta = f"nivel_urgencia({lista_prolog}, U)"
+
+        resultado = list(self.prolog.query(consulta))
+
+        if resultado:
+            return resultado[0]["U"]
+
+        return "baja"

@@ -37,8 +37,21 @@ contraindicado(ibuprofeno, ulcera).
 contraindicado(amoxicilina, alergia_penicilina).
 contraindicado(antibiotico, resistencia_antibiotica).
 
+% Nivel de severidad de cada sintoma
+% Leve - Moderado - Severo
+urgencia(fiebre, moderado).
+urgencia(tos, moderado).
+urgencia(dolor_cabeza, leve).
+urgencia(escalofrios, moderado).
+urgencia(dificultad_respirar, severo).
+urgencia(dolor_pecho, moderado).
+urgencia(fatiga, leve).
+urgencia(dolor_abdominal, moderado).
+urgencia(diarrea, leve).
+urgencia(nauseas, leve).
+urgencia(vomitos, moderado).
 % =========================
-% REGLAS
+% Reglas - ayudan en el backend
 % =========================
 
 % Contar cuántos síntomas de la enfermedad coinciden con los síntomas del paciente.
@@ -60,3 +73,21 @@ total_sintomas(E, Total):- findall(S, sintomas(E,S), Lista), length(Lista,Total)
 afinidad(E, ListaSintomas, Porcentaje) :- contar_coincidencias(E, ListaSintomas, Coincidencias),
     total_sintomas(E, Total),Total > 0,
     Porcentaje is (Coincidencias / Total) * 100.
+
+% Medicamento recomendado(ver contraindicaciones)
+% medicamento(M,Enfermedad) -> M es un medicamento recomendado para tratar la Enfermedad
+% y
+% \+ (member(A, Alergias), contraindicado(M, A)) -> No existe ninguna alergia en la lista de alergias que contraindique el medicamento M.
+medicamento_recomendado( M , Enfermedad, Alergias) :- medicamento(M,Enfermedad), \+ (member(A, Alergias), contraindicado(M, A)).
+
+% Urgencia
+% Si existe un síntoma severo → urgencia alta
+nivel_urgencia(ListaSintomas, alta) :-
+    member(S, ListaSintomas), urgencia(S, severo), !.
+
+% Si existe moderado → urgencia media
+nivel_urgencia(ListaSintomas, media) :-
+    member(S, ListaSintomas), urgencia(S, moderado), !.
+
+% Si no hay severos ni moderados
+nivel_urgencia(_, baja).

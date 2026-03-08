@@ -10,9 +10,6 @@ class MediLogicService:
     def obtener_enfermedades(self) -> List[str]:
         return self.repo.obtener_enfermedades()
 
-    def obtener_sintomas_por_nombre(self, nombre: str) -> Dict[str, Any]:
-        return self.repo.obtener_sintomas_por_nombre(nombre)
-
     def calcular_afinidad(self, enfermedad: str, sintomas: List[str]) -> float:
         return self.repo.calcular_afinidad(enfermedad, sintomas)
 
@@ -34,3 +31,23 @@ class MediLogicService:
         resultados.sort(key=lambda x: x["afinidad"], reverse=True)
 
         return resultados
+    
+    # Obtener sintomas por nombre de enfermedad
+    def obtener_sintomas_por_nombre(self, nombre: str) -> Dict[str, Any]:
+        return self.repo.obtener_sintomas_por_nombre(nombre)
+
+    # Obtener medicamentos para una enfermedad --------------------
+    def obtener_medicamentos_por_enfermedad(self, nombre: str):
+        return self.repo.obtener_medicamentos_por_enfermedad(nombre)
+    
+    # Obtener medicamentos recomendados para una enfermedad considerando alergias
+    def obtener_medicamentos_recomendados(self, nombre: str, alergias: List[str]):
+        return self.repo.obtener_medicamentos_recomendados(nombre, alergias)
+    
+    # Obtener diagnostico completo
+    def obtener_diagnostico_completo(self, sintomas: List[str], alergias: List[str]) -> List[Dict[str, Any]]:
+        return self.repo.obtener_diagnostico_completo(sintomas, alergias)
+    
+    # Obtener nivel de urgencia de sintoma
+    def obtener_nivel_urgencia(self, sintomas: List[str]) -> str:
+        return self.repo.obtener_nivel_urgencia(sintomas)
