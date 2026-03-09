@@ -51,3 +51,7 @@ class MediLogicService:
     # Obtener nivel de urgencia de sintoma
     def obtener_nivel_urgencia(self, sintomas: List[str]) -> str:
         return self.repo.obtener_nivel_urgencia(sintomas)
+    
+    # Obtener todos los sintomas
+    def obtener_sintomas(self) -> List[str]:
+        return self.repo.obtener_sintomas()

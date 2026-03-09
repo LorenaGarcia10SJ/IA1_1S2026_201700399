@@ -116,3 +116,8 @@ class MediLogicRepo:
             return resultado[0]["U"]
 
         return "baja"
+    
+    # Obtener todos los sintomas registrados en Prolog
+    def obtener_sintomas(self) -> List[str]:
+        resultado = list(self.prolog.query("sintomas(_,S)"))
+        return [r["S"] for r in resultado]  

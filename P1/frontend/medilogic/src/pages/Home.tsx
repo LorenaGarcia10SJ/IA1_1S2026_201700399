@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import "./Home.css";
 import { FaHospital, FaBrain } from "react-icons/fa";
-import { MdMedicalServices } from "react-icons/md";
 
 function Home() {
 

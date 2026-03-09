@@ -86,5 +86,10 @@ def medilogic_router(service: MediLogicService) -> APIRouter:
 
         resultado = service.obtener_diagnostico_completo(sintomas, alergias)
         return resultado
+
     
+    @router.get("/obtener_sintomas")
+    def obtener_todos_los_sintomas():
+        return {"sintomas": service.obtener_sintomas()}
+
     return router
