@@ -119,5 +119,22 @@ class MediLogicRepo:
     
     # Obtener todos los sintomas registrados en Prolog
     def obtener_sintomas(self) -> List[str]:
-        resultado = list(self.prolog.query("sintomas(_,S)"))
-        return [r["S"] for r in resultado]  
+        prolog = Prolog()
+        prolog.consult("medilogic.pl")
+        resultado = list(prolog.query("sintomas(_,S)"))
+        return list({r["S"] for r in resultado})
+    
+    # Obtener alergias registradas en Prolog
+    def obtener_alergias(self) -> List[str]:
+        prolog = Prolog()
+        prolog.consult("medilogic.pl")
+        resultado = list(prolog.query("contraindicado(_,A)"))
+        return list({r["A"] for r in resultado})
+    
+    # Obtener enfermedades cronicas registradas en Prolog
+    def obtener_enfermedades_cronicas(self) -> List[str]:
+        prolog = Prolog()
+        prolog.consult("medilogic.pl")
+        resultado = list(prolog.query("enfermedad_cronica(E)"))
+        return list({r["E"] for r in resultado})    
+    

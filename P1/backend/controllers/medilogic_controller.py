@@ -58,7 +58,58 @@ def medilogic_router(service: MediLogicService) -> APIRouter:
     
 
     # Diagnóstico completo considerando síntomas y alergias
-    @router.post("/diagnostico_completo")
+    @router.post("/diagnostico-completo")
+    def diagnostico_completo(data: dict = Body(...)):
+
+        sintomas = data.get("sintomas", [])
+        alergias = data.get("alergias", [])
+        cronicas = data.get("cronicas", [])
+
+        if not sintomas:
+            return {"error": "Debe enviar síntomas"}
+
+        resultado = service.obtener_diagnostico_completo(
+            sintomas,
+            alergias,
+            cronicas
+        )
+
+        return resultado
+
+    
+    @router.get("/obtener_sintomas")
+    def obtener_todos_los_sintomas():
+        return {"sintomas": service.obtener_sintomas()}
+
+
+    @router.get("/obtener_alergias")
+    def obtener_todas_las_alergias():
+        return {"alergias": service.obtener_alergias()}
+
+    @router.get("/obtener_enfermedades_cronicas")
+    def obtener_enfermedades_cronicas():
+        return {"enfermedades_cronicas": service.obtener_enfermedades_cronicas()}   
+    
+    
+    return router
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""     @router.post("/diagnostico_completo")
     def diagnostico_completo(data: dict = Body(...)):
 
         sintomas = data.get("sintomas")
@@ -85,11 +136,4 @@ def medilogic_router(service: MediLogicService) -> APIRouter:
             return {"error": "Debe enviar una lista de sintomas"}
 
         resultado = service.obtener_diagnostico_completo(sintomas, alergias)
-        return resultado
-
-    
-    @router.get("/obtener_sintomas")
-    def obtener_todos_los_sintomas():
-        return {"sintomas": service.obtener_sintomas()}
-
-    return router
+        return resultado """

@@ -1,5 +1,6 @@
 import { useState , useEffect} from "react";
 import "./Paciente.css";
+import { useNavigate } from "react-router-dom";
 
 type Severidad = "leve" | "moderado" | "severo" | "";
 
@@ -10,9 +11,9 @@ type SintomasState = {
 function Paciente() {
 
   const [sintomas, setSintomas] = useState<SintomasState>({});
-  const [alergias, setAlergias] = useState<string>("");
-  const [cronicas, setCronicas] = useState<string[]>([]);
-
+  const [alergias, setAlergias] = useState<string[]>([]);
+  const [cronica, setCronicas] = useState<string[]>([]);
+  const navigate = useNavigate();
   const [listaSintomas, setListaSintomas] = useState<string[]>([]);
 
   useEffect(() => {
@@ -30,13 +31,38 @@ function Paciente() {
 
   }, []);
     
+  // Obtener alergias desde backend
+  const [listaAlergias, setListaAlergias] = useState<string[]>([]);
+  useEffect(() => {
 
-  const enfermedadesCronicas: string[] = [
-    "Diabetes",
-    "Hipertensión",
-    "Enfermedad autoinmune",
-    "Asma"
-  ];
+    fetch("http://localhost:8000/medilogic/obtener_alergias")
+      .then(res => res.json())
+      .then(data => {
+
+        const alergiasUnicas = [...new Set(data.alergias as string[])];
+        setListaAlergias(alergiasUnicas);
+
+      })
+      .catch(error => console.error("Error obteniendo alergias:", error));
+
+  }, []);
+
+  // Obtener enfermedades crónicas desde backend
+  const [listaCronicas, setListaCronicas] = useState<string[]>([]);
+  useEffect(() => {
+
+    fetch("http://localhost:8000/medilogic/obtener_enfermedades_cronicas")
+      .then(res => res.json())
+      .then(data => {
+
+        const cronicasUnicas = [...new Set(data.enfermedades_cronicas as string[])];
+        setListaCronicas(cronicasUnicas);
+
+      })
+      .catch(error => console.error("Error obteniendo enfermedades crónicas:", error));
+
+  }, []);
+
 
   const handleSintomaChange = (sintoma: string, severidad: Severidad) => {
     setSintomas({
@@ -45,98 +71,144 @@ function Paciente() {
     });
   };
 
-  const handleCronicaChange = (enfermedad: string) => {
-
-    if (cronicas.includes(enfermedad)) {
-      setCronicas(cronicas.filter(e => e !== enfermedad));
+  const handleAlergiaChange = (alergia: string) => {
+    if(alergias.includes(alergia)){
+      setAlergias(
+        alergias.filter(a => a !== alergia)
+      );
     } else {
-      setCronicas([...cronicas, enfermedad]);
+        setAlergias([...alergias, alergia]);
+    }
+  };
+
+  const handleCronicaChange = (cronicaSeleccionada: string) => {
+
+    if (cronica.includes(cronicaSeleccionada)) {
+      setCronicas(cronica.filter(a => a !== cronicaSeleccionada));
+    } else {
+      setCronicas([...cronica, cronicaSeleccionada]);
     }
 
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
     e.preventDefault();
 
+    const sintomasSeleccionados = Object.entries(sintomas)
+      .filter(([_, severidad]) => severidad !== "")
+      .map(([nombre, severidad]) => ({
+          nombre,
+          severidad
+      }));
+
     const datosPaciente = {
-      sintomas,
-      alergias,
-      cronicas
+      sintomas: sintomasSeleccionados,
+      alergias: alergias,
+      cronicas: cronica
     };
 
-    console.log(datosPaciente);
-    alert("Información enviada para análisis");
+    const response = await fetch("http://localhost:8000/medilogic/diagnostico-completo",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify(datosPaciente)
+    });
 
+    const resultado = await response.json();
+
+    console.log(resultado);
   };
 
   const formatearSintoma=(sintoma: string)=>{
     return sintoma
     .replace(/_/g, " ") // reemplaza _ por espacio
     .replace(/\b\w/g, (letra) => letra.toUpperCase()); // primera letra mayúscula
-};
+  };
 
   return (
 
     <div className="dashboard">
+      <button 
+        className="btn-volver"
+        onClick={() => navigate("/")}
+      >
+        ⬅ Volver al inicio
+      </button>
 
-      <h1>Panel del Paciente</h1>
-
+      <h1>Diágnostico del Paciente</h1>
+      
       <form onSubmit={handleSubmit}>
 
         {/* SINTOMAS */}
         <h2>Selecciona tus síntomas</h2>
+        <div className="sintomas-container">
+          {listaSintomas.map((sintoma) => (
 
-        {listaSintomas.map((sintoma) => (
+            <div key={sintoma} className="sintoma-card">
 
-          <div key={sintoma} className="sintoma">
+              <label>{formatearSintoma(sintoma)}</label>
 
-            <label>{formatearSintoma(sintoma)}</label>
+              <select
+                onChange={(e) =>
+                  handleSintomaChange(
+                    sintoma,
+                    e.target.value as Severidad
+                  )
+                }
+              >
+                <option value="">Seleccione intensidad</option>
+                <option value="leve">Leve</option>
+                <option value="moderado">Moderado</option>
+                <option value="severo">Severo</option>
+              </select>
 
-            <select
-              onChange={(e) =>
-                handleSintomaChange(
-                  sintoma,
-                  e.target.value as Severidad
-                )
-              }
-            >
-              <option value="">Seleccionar severidad</option>
-              <option value="leve">Leve</option>
-              <option value="moderado">Moderado</option>
-              <option value="severo">Severo</option>
-            </select>
+            </div>
 
-          </div>
-
-        ))}
+          ))}
+        </div>
 
         {/* ALERGIAS */}
-        <h2>Alergias a medicamentos</h2>
+        <h2>Alergias o condiciones médicas</h2>
+        <p className="h3">Indique si tiene alguna alergia o condición médica relevante (ej. alergia a penicilina, asma, etc.)</p>
+        <div className="checkbox-gropu">
+          {listaAlergias.map((alergia) => (
 
-        <textarea
-          placeholder="Ej: penicilina, ibuprofeno..."
-          value={alergias}
-          onChange={(e) => setAlergias(e.target.value)}
-        />
+            <label key={alergia} className="checkbox">
+
+              <input
+                type="checkbox"
+                onChange={() => handleAlergiaChange(alergia)}
+              />
+
+              {formatearSintoma(alergia)}
+
+            </label>
+
+          ))}
+        </div>
 
         {/* ENFERMEDADES CRONICAS */}
         <h2>Enfermedades crónicas</h2>
 
-        {enfermedadesCronicas.map((enfermedad) => (
+        <div className="checkbox-gropu">
 
-          <label key={enfermedad} className="checkbox">
+          {listaCronicas.map((cronica) => (
 
-            <input
-              type="checkbox"
-              onChange={() => handleCronicaChange(enfermedad)}
-            />
+            <label key={cronica} className="checkbox">
 
-            {enfermedad}
+              <input
+                type="checkbox"
+                onChange={() => handleCronicaChange(cronica)}
+              />
 
-          </label>
+              {formatearSintoma(cronica)}
 
-        ))}
+            </label>
+
+          ))}
+        </div>
 
         <button type="submit" className="btn">
           Analizar síntomas

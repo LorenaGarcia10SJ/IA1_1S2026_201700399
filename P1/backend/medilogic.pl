@@ -33,9 +33,16 @@ medicamento(amoxicilina, bronquitis).
 
 % Contraindicaciones
 contraindicado(paracetamol, alergia_paracetamol).
-contraindicado(ibuprofeno, ulcera).
 contraindicado(amoxicilina, alergia_penicilina).
 contraindicado(antibiotico, resistencia_antibiotica).
+contraindicado(ibuprofeno, alergia_ibuprofeno).
+
+% Enfermedades crónicas
+enfermedad_cronica(asma).
+enfermedad_cronica(diabetes).
+enfermedad_cronica(hipertension).
+enfermedad_cronica(cardiopatia).
+enfermedad_cronica(enfermedad_autoinmune).
 
 % Nivel de severidad de cada sintoma
 % Leve - Moderado - Severo
