@@ -12,7 +12,10 @@
 - Archvio "medilogic.pl" en el que se incluye:
   - Hechos
   - Reglas
-  
+
+## Instalar dependencias
+npm install jspdf
+
 ### Módulos principales 
  - Dashboard Pacientes
  - Dashboard Administrador

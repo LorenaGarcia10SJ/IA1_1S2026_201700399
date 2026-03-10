@@ -1,6 +1,7 @@
 import { useState , useEffect} from "react";
 import "./Paciente.css";
 import { useNavigate } from "react-router-dom";
+import jsPDF from "jspdf";
 
 type Severidad = "leve" | "moderado" | "severo" | "";
 
@@ -145,6 +146,179 @@ function Paciente() {
     }
   };
   
+  /* DETALLE -> TODOS LOS DIAGNOSTICOS */
+  const mostrarDetalle = (diagnosticoCompleto: any) => {
+
+    let mensaje = "DIAGNÓSTICOS SUGERIDOS\n\n";
+
+    diagnosticoCompleto.diagnosticos.forEach((d:any)=>{
+      mensaje +=
+      "Enfermedad: " + formatearSintoma(d.enfermedad) + "\n" +
+      "Afinidad: " + d.afinidad + "%\n" +
+      "Medicamentos: " + d.medicamentos.join(", ") + "\n\n";
+    });
+
+    alert(mensaje);
+  };
+
+  /* PDF -> TODOS LOS DIAGNOSTICOS */
+  const descargarPDF = (diagnosticoCompleto: any) => {
+
+    const doc = new jsPDF();
+
+    /* ---------- ENCABEZADO ---------- */
+
+    doc.setFillColor(37, 99, 235);
+    doc.rect(0, 0, 210, 25, "F");
+
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(18);
+    // Agregar imagen del logo (reemplaza "logo.png" con la ruta de tu imagen)
+    // doc.addImage("logo.png", "PNG", 10, 5, 15, 15);
+    doc.text("MediLogic - Informe Médico", 20, 15);
+
+    doc.setTextColor(0,0,0);
+    doc.setFontSize(11);
+
+    doc.text("Fecha del análisis: " + new Date().toLocaleString(), 20, 35);
+
+    /* ---------- URGENCIA ---------- */
+
+    const urgencia = diagnosticoCompleto.urgencia;
+
+    let colorUrgencia = [34,197,94]; // verde
+
+    if(urgencia === "media"){
+      colorUrgencia = [234,179,8]; // amarillo
+    }
+
+    if(urgencia === "alta"){
+      colorUrgencia = [239,68,68]; // rojo
+    }
+
+    doc.setFillColor(colorUrgencia[0],colorUrgencia[1],colorUrgencia[2]);
+    doc.rect(20,45,170,10,"F");
+
+    doc.setTextColor(255,255,255);
+    doc.text(
+      "Nivel de urgencia: " + urgencia.toUpperCase(),
+      25,
+      52
+    );
+
+    doc.setTextColor(0,0,0);
+
+    /* ---------- TITULO SECCION ---------- */
+
+    doc.setFontSize(14);
+    doc.text("Diagnósticos sugeridos",20,70);
+
+    /* ---------- TABLA ---------- */
+
+    let y = 80;
+
+    doc.setFontSize(11);
+
+    doc.text("Enfermedad",20,y);
+    doc.text("Afinidad",80,y);
+    doc.text("Medicamentos",150,y);
+
+    y += 5;
+    doc.line(20,y,190,y);
+
+    y += 8;
+
+    diagnosticoCompleto.diagnosticos.forEach((d:any)=>{
+
+      /* nombre enfermedad */
+
+      doc.text(
+        formatearSintoma(d.enfermedad),
+        20,
+        y
+      );
+
+      /* barra de afinidad */
+
+      const barraMax = 40;
+      const inicioBarra = 90;
+
+      const ancho = (d.afinidad / 100) * barraMax;
+
+      // barra gris de fondo
+      doc.setFillColor(220,220,220);
+      doc.rect(inicioBarra, y-4, barraMax, 5, "F");
+
+      // barra azul de progreso
+      doc.setFillColor(59,130,246);
+      doc.rect(inicioBarra, y-4, ancho, 5, "F");
+
+      // porcentaje después de la barra
+      doc.setTextColor(0,0,0);
+      doc.text(
+        d.afinidad + "%",
+        inicioBarra + barraMax + 5,
+        y
+      );
+
+      /* medicamentos */
+
+      doc.text(
+        d.medicamentos
+        .map((m:string)=>formatearSintoma(m))
+        .join(", "),
+        150,
+        y
+      );
+
+      y += 15;
+
+    });
+
+    /* ---------- ALERTA MEDICA ---------- */
+
+    y += 10;
+
+    doc.setDrawColor(239,68,68);
+    doc.rect(20,y,170,20);
+
+    doc.setFontSize(10);
+
+    doc.text(
+      "Advertencia médica:",
+      25,
+      y + 7
+    );
+
+    doc.text(
+      "Este sistema proporciona una sugerencia basada en síntomas.",
+      25,
+      y + 13
+    );
+
+    doc.text(
+      "Consulte siempre a un profesional de salud.",
+      25,
+      y + 18
+    );
+
+    /* ---------- FOOTER ---------- */
+
+    doc.setFontSize(9);
+
+    doc.text(
+      "Generado por MediLogic - Sistema Experto de Diagnóstico",
+      20,
+      285
+    );
+
+    doc.save("reporte_diagnostico_medico.pdf");
+
+  };
+
+  const principal = diagnostico?.diagnosticos?.[0];
+
+  //----------------------------------------------------
   return (
 
     <div className="dashboard">
@@ -157,6 +331,7 @@ function Paciente() {
 
       <h1>Diágnostico del Paciente</h1>
       
+      {!diagnostico && ( 
       <form onSubmit={handleSubmit}>
 
         {/* SINTOMAS */}
@@ -231,35 +406,73 @@ function Paciente() {
         </button>
 
       </form>
+      )}
 
-    {diagnostico && (
+    {diagnostico && principal && (
+
       <div className="resultado">
-        <h2>Resultado del Diagnóstico</h2>
+
+        <h2>Informe de Diagnóstico Médico</h2>
 
         <p>
-          <strong>Enfermedad probable:</strong> {formatearSintoma(diagnostico.diagnosticos[0].enfermedad)}
+          <strong>Urgencia:</strong>{" "}
+          {formatearSintoma(diagnostico.urgencia)} -{" "}
+          {mensajeUrgencia(diagnostico.urgencia)}
         </p>
 
-        <p>
-          <strong> Urgencia:</strong> 
-          
-          {diagnostico.urgencia + " - " + mensajeUrgencia(diagnostico.urgencia)}
-          {/*mensaje: {mensajeUrgencia(diagnostico.urgencia)}*/}
-        </p>
+        <table className="tabla-diagnostico">
 
-        <p>
-          <strong>Probabilidad:</strong> {diagnostico.diagnosticos[0].afinidad}%
-        </p>
+          <thead>
+            <tr>
+              <th>Enfermedad más probable</th>
+              <th>Afinidad</th>
+              <th>Medicamentos</th>
+              <th>Opciones</th>
+            </tr>
+          </thead>
 
-        <h3>Medicamentos recomendados</h3>
-        <ul>
-          {diagnostico.diagnosticos[0].medicamentos.map((med: string) => (
-            <li key={med}>{formatearSintoma(med)}</li>
-          ))}
-        </ul>
+          <tbody>
+
+            <tr>
+
+              <td>{formatearSintoma(principal.enfermedad)}</td>
+
+              <td>{principal.afinidad}%</td>
+
+              <td>
+                {principal.medicamentos.map((m:string)=>(
+                  <div key={m}>{formatearSintoma(m)}</div>
+                ))}
+              </td>
+
+              <td>
+
+                <button
+                  className="btn-opcion"
+                  onClick={() => mostrarDetalle(diagnostico)}
+                >
+                  Ver detalle
+                </button>
+
+                <button
+                  className="btn-opcion"
+                  onClick={() => descargarPDF(diagnostico)}
+                >
+                  PDF
+                </button>
+
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
 
       </div>
-    )}
+
+      )}
+
 
     </div>
 

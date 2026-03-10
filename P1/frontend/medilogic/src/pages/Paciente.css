@@ -143,3 +143,50 @@ body{
   border:1px solid #d6e2ff;
   color: #141414;
 }
+
+.tabla-diagnostico{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:20px;
+}
+
+.tabla-diagnostico th,
+.tabla-diagnostico td{
+  border:1px solid #ddd;
+  padding:10px;
+  text-align:center;
+}
+
+.tabla-diagnostico th{
+  background:#2563eb;
+  color:white;
+}
+
+.barra-afinidad{
+  background:#e5e7eb;
+  border-radius:6px;
+  height:20px;
+}
+
+.barra{
+  background:#22c55e;
+  height:100%;
+  border-radius:6px;
+  text-align:center;
+  color:white;
+  font-size:12px;
+}
+
+.btn-opcion{
+  margin:3px;
+  padding:6px 10px;
+  border:none;
+  border-radius:6px;
+  background:#63b977;
+  color:white;
+  cursor:pointer;
+}
+
+.btn-opcion:hover{
+  background:#1d4ed8;
+}
