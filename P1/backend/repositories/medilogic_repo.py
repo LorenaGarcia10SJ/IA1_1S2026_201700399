@@ -81,7 +81,7 @@ class MediLogicRepo:
     
 
     # Obtener diagnostico completo
-    def obtener_diagnostico_completo(self, sintomas: List[str], alergias: List[str]) -> List[Dict[str, Any]]:
+    def obtener_diagnostico_completo(self, sintomas: List[str], alergias: List[str], cronicas: List[str]) -> List[Dict[str, Any]]:
         enfermedades = self.obtener_enfermedades()
         urgencia = self.obtener_nivel_urgencia(sintomas)
         resultados = []

@@ -16,6 +16,9 @@ function Paciente() {
   const navigate = useNavigate();
   const [listaSintomas, setListaSintomas] = useState<string[]>([]);
 
+  // Resultado del diágnostico
+  const [diagnostico, setDiagnostico] = useState<any>(null);
+
   useEffect(() => {
 
     fetch("http://localhost:8000/medilogic/obtener_sintomas")
@@ -117,6 +120,7 @@ function Paciente() {
     });
 
     const resultado = await response.json();
+    setDiagnostico(resultado);
 
     console.log(resultado);
   };
@@ -158,7 +162,7 @@ function Paciente() {
                   )
                 }
               >
-                <option value="">Seleccione intensidad</option>
+                <option value="">No tengo este síntoma</option>
                 <option value="leve">Leve</option>
                 <option value="moderado">Moderado</option>
                 <option value="severo">Severo</option>
@@ -191,9 +195,7 @@ function Paciente() {
 
         {/* ENFERMEDADES CRONICAS */}
         <h2>Enfermedades crónicas</h2>
-
         <div className="checkbox-gropu">
-
           {listaCronicas.map((cronica) => (
 
             <label key={cronica} className="checkbox">
@@ -215,6 +217,27 @@ function Paciente() {
         </button>
 
       </form>
+    {diagnostico && (
+      <div className="resultado">
+        <h2>Resultado del Diagnóstico</h2>
+
+        <p>
+          <strong>Enfermedad probable:</strong> {formatearSintoma(diagnostico.diagnosticos[0].enfermedad)}
+        </p>
+
+        <p>
+          <strong>Probabilidad:</strong> {diagnostico.diagnosticos[0].afinidad}%
+        </p>
+
+        <h3>Medicamentos recomendados</h3>
+        <ul>
+          {diagnostico.diagnosticos[0].medicamentos.map((med: string) => (
+            <li key={med}>{formatearSintoma(med)}</li>
+          ))}
+        </ul>
+
+      </div>
+    )}
 
     </div>
 

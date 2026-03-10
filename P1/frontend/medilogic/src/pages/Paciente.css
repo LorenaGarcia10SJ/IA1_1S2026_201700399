@@ -134,3 +134,12 @@ body{
 .btn-volver:hover{
   text-decoration:underline;
 }
+
+.resultado{
+  margin-top:30px;
+  padding:20px;
+  border-radius:10px;
+  background:#f4f8ff;
+  border:1px solid #d6e2ff;
+  color: #141414;
+}

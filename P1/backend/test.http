@@ -1,5 +1,18 @@
 GET http://localhost:8000/medilogic/obtener_enfermedades_cronicas
 
-
+### Otra consulta
 GET http://localhost:8000/medilogic/obtener_sintomas
-|
+
+
+### Diagnóstico completo
+POST http://localhost:8000/medilogic/diagnostico-completo
+Content-Type: application/json
+
+{
+  "sintomas":[
+    {"nombre":"fiebre","severidad":"moderado"},
+    {"nombre":"tos","severidad":"leve"}
+  ],
+  "alergias":["alergia_penicilina", "alergia_paracetamol"],
+  "cronicas":["diabetes"]
+}

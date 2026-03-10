@@ -61,12 +61,15 @@ def medilogic_router(service: MediLogicService) -> APIRouter:
     @router.post("/diagnostico-completo")
     def diagnostico_completo(data: dict = Body(...)):
 
-        sintomas = data.get("sintomas", [])
+        sintomas_data = data.get("sintomas", [])
         alergias = data.get("alergias", [])
         cronicas = data.get("cronicas", [])
 
-        if not sintomas:
+        if not sintomas_data:
             return {"error": "Debe enviar síntomas"}
+
+        # EXTRAER SOLO LOS NOMBRES DE LOS SINTOMAS
+        sintomas = [s["nombre"] for s in sintomas_data]
 
         resultado = service.obtener_diagnostico_completo(
             sintomas,

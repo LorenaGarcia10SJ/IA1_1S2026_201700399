@@ -45,8 +45,8 @@ class MediLogicService:
         return self.repo.obtener_medicamentos_recomendados(nombre, alergias)
     
     # Obtener diagnostico completo
-    def obtener_diagnostico_completo(self, sintomas: List[str], alergias: List[str]) -> List[Dict[str, Any]]:
-        return self.repo.obtener_diagnostico_completo(sintomas, alergias)
+    def obtener_diagnostico_completo(self, sintomas: List[str], alergias: List[str], cronicas: List[str]) -> List[Dict[str, Any]]:
+        return self.repo.obtener_diagnostico_completo(sintomas, alergias, cronicas)
     
     # Obtener nivel de urgencia de sintoma
     def obtener_nivel_urgencia(self, sintomas: List[str]) -> str:
