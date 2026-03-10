@@ -131,6 +131,20 @@ function Paciente() {
     .replace(/\b\w/g, (letra) => letra.toUpperCase()); // primera letra mayúscula
   };
 
+  const mensajeUrgencia= (urgencia: string)=>{
+    // monstrar mensaje
+    switch(urgencia){
+      case "alta":
+        return "Recomendamos buscar atención médica inmediata.";
+      case "media":
+        return "Posible automanejo pero se recomienda consultar a un médico pronto.";
+      case "baja":
+        return "Es probable que puedas manejarlo con cuidado en casa, pero si empeora, consulta a un médico.";
+      default:
+        return "";
+    }
+  };
+  
   return (
 
     <div className="dashboard">
@@ -217,12 +231,20 @@ function Paciente() {
         </button>
 
       </form>
+
     {diagnostico && (
       <div className="resultado">
         <h2>Resultado del Diagnóstico</h2>
 
         <p>
           <strong>Enfermedad probable:</strong> {formatearSintoma(diagnostico.diagnosticos[0].enfermedad)}
+        </p>
+
+        <p>
+          <strong> Urgencia:</strong> 
+          
+          {diagnostico.urgencia + " - " + mensajeUrgencia(diagnostico.urgencia)}
+          {/*mensaje: {mensajeUrgencia(diagnostico.urgencia)}*/}
         </p>
 
         <p>

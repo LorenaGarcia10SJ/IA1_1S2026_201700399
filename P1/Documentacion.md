@@ -1,6 +1,18 @@
 # Proyecto 1
 # MediLogic
 
+## Herramientas y tecnologías requeridas
+
+### Lenguajes de programación
+- Python
+- Librerias: pyswip, PyAutoGUI
+
+### Motor lógico
+- Prolog
+- Archvio "medilogic.pl" en el que se incluye:
+  - Hechos
+  - Reglas
+  
 ### Módulos principales 
  - Dashboard Pacientes
  - Dashboard Administrador
@@ -32,3 +44,24 @@
 # Logica de prolog medilogic.pl
 
 - Se necesita calcular la afinidad: (sintomas que coinciden / sintomas totales de la enfermedad)* 100
+
+
+# Resultados obtenidos
+
+{
+  "urgencia": "media",
+  "diagnosticos": [
+    {
+      "enfermedad": "gripe",
+      "afinidad": 50,
+      "medicamentos": ["ibuprofeno"]
+    },
+    {
+      "enfermedad": "bronquitis",
+      "afinidad": 25,
+      "medicamentos": ["antibiotico"]
+    }
+  ]
+}
+
+Desde frontend se envia los datos que el usuario selecciona.
