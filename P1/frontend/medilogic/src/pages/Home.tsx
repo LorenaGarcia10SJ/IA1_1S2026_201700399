@@ -25,7 +25,7 @@ function Home() {
             🧑‍⚕️ Paciente
           </Link>
 
-          <Link to="/admin" className="btn">
+          <Link to="/admin-login" className="btn">
             ⚙️ Administrador
           </Link>
 

@@ -1,5 +1,13 @@
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body, Depends
 from services.medilogic_service import MediLogicService
+from pydantic import BaseModel
+from security.jwt_handler import crear_token
+from security.auth_middleware import verificar_admin
+
+
+class Login(BaseModel):
+    usuario:str
+    password:str
 
 def medilogic_router(service: MediLogicService) -> APIRouter:
     
@@ -94,6 +102,30 @@ def medilogic_router(service: MediLogicService) -> APIRouter:
         return {"enfermedades_cronicas": service.obtener_enfermedades_cronicas()}   
     
     
+    # LOGIN DE ADMINISTRADOR
+
+    @router.post("/login-admin")
+    def login(data: Login):
+
+        if data.usuario == "admin" and data.password == "1234":
+
+            token = crear_token({
+                "usuario": data.usuario,
+                "rol": "admin"
+            })
+
+            return {"token": token}
+
+        return {"error": "credenciales incorrectas"} 
+        
+
+    @router.get("/admin-test")
+    def admin_test(user = Depends(verificar_admin)):
+        return {
+            "mensaje": "Acceso autorizado",
+            "usuario": user
+        }
+
     return router
 
 

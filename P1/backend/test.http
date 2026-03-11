@@ -16,3 +16,12 @@ Content-Type: application/json
   "alergias":["alergia_penicilina", "alergia_paracetamol"],
   "cronicas":["diabetes"]
 }
+
+### LOgin
+POST http://localhost:8000/medilogic/login-admin
+Content-Type: application/json  
+
+{
+  "usuario":"admin",
+  "password":"1234"
+}
