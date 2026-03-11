@@ -68,3 +68,19 @@ npm install jspdf
 }
 
 Desde frontend se envia los datos que el usuario selecciona.
+
+## Dashboard Administrador
+El modulo esta protegido por autenticación y es accesible únicamente por usuarios con credenciales válidas.
+
+Funcionalidades:
+- Crear enfermedades 
+  - Nombre
+  - Descripcion
+  - sintomas asociados
+  - medicamentos contraindicados
+- Editar enfermedades
+- Eliminar enfermedades
+- Registrar nuevos sintomas
+- Administrar medicamentos disponibles
+- Clasificar enfermedades por sistema del cuerpo.
+
