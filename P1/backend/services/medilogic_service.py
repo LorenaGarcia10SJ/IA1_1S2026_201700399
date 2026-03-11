@@ -56,6 +56,10 @@ class MediLogicService:
     def obtener_sintomas(self) -> List[str]:
         return self.repo.obtener_sintomas()
     
+    # Obtener todos los medicamentos
+    def obtener_medicamentos(self) -> List[str]:
+        return self.repo.obtener_medicamentos()
+    
     # Obtener alergias
     def obtener_alergias(self) -> List[str]:
         return self.repo.obtener_alergias()     
@@ -63,3 +67,8 @@ class MediLogicService:
     # Obtener enfermedades cronicas
     def obtener_enfermedades_cronicas(self) -> List[str]:
         return self.repo.obtener_enfermedades_cronicas()
+
+
+    # Agregar enfermedad
+    def agregar_enfermedad(self, nombre: str, sintomas: List[str], medicamentos: List[str]):
+        return self.repo.agregar_enfermedad(nombre, sintomas, medicamentos  )

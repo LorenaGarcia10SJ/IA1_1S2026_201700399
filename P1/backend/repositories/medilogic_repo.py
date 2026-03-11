@@ -138,3 +138,26 @@ class MediLogicRepo:
         resultado = list(prolog.query("enfermedad_cronica(E)"))
         return list({r["E"] for r in resultado})    
     
+    # Obtener medicamentos registrados en Prolog
+    def obtener_medicamentos(self) -> List[str]:
+        prolog = Prolog()
+        prolog.consult("medilogic.pl")
+        resultado = list(prolog.query("medicamento(M,_)"))
+        return list({r["M"] for r in resultado})    
+    
+    def agregar_enfermedad(self,nombre: str, sintomas: List[str], medicamentos: List[str]):
+
+        with open(self.prolog_file, "a", encoding="utf-8") as f:
+
+            f.write(f"\n\n% enfermedad creada desde admin\n")
+
+            f.write(f"enfermedad({nombre}).\n")
+
+            for s in sintomas:
+                f.write(f"sintomas({nombre},{s}).\n")
+
+            for m in medicamentos:
+                f.write(f"medicamento({m},{nombre}).\n")
+
+        # recargar prolog
+        self._consult_file()

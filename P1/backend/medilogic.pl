@@ -1,3 +1,7 @@
+:- discontiguous enfermedad/1.
+:- discontiguous sintomas/2.
+:- discontiguous medicamento/2.
+
 % =========================
 % HECHOS
 % =========================
@@ -98,3 +102,10 @@ nivel_urgencia(ListaSintomas, media) :-
 
 % Si no hay severos ni moderados
 nivel_urgencia(_, baja).
+
+% enfermedad creada desde admin
+enfermedad(covid).
+sintomas(covid,dolor_cabeza).
+sintomas(covid,perdida_del_gusto).
+medicamento(acetaminofen,covid).
+medicamento(paracetamol,covid).

@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import Navbar from "../components/Navbar";
+
 import EnfermedadesAdmin from "../components/admin/EnfermedadesAdmin";
 import SintomasAdmin from "../components/admin/SintomasAdmin";
 import MedicamentosAdmin from "../components/admin/MedicamentosAdmin";
+
+import "./Admin.css";
 
 function Admin() {
 
@@ -29,35 +33,58 @@ function Admin() {
 
   return(
 
-    <div style={{padding:"40px"}}>
+    <div>
 
-      <h1>Panel Administrador</h1>
+      <Navbar mode = "admin"/>
 
-      <button onClick={logout}>
-        Cerrar sesión
-      </button>
+      <div className="admin-container">
 
-      <hr/>
+        {/* SIDEBAR */}
 
-      <div style={{marginBottom:"20px"}}>
+        <div className="admin-sidebar">
 
-        <button onClick={()=>setTab("enfermedades")}>
-          Enfermedades
-        </button>
+          <h2>Administrador</h2>
 
-        <button onClick={()=>setTab("sintomas")}>
-          Síntomas
-        </button>
+          <button
+            className={tab==="enfermedades" ? "active" : ""}
+            onClick={()=>setTab("enfermedades")}
+          >
+            🦠 Enfermedades
+          </button>
 
-        <button onClick={()=>setTab("medicamentos")}>
-          Medicamentos
-        </button>
+          <button
+            className={tab==="sintomas" ? "active" : ""}
+            onClick={()=>setTab("sintomas")}
+          >
+            🤒 Síntomas
+          </button>
+
+          <button
+            className={tab==="medicamentos" ? "active" : ""}
+            onClick={()=>setTab("medicamentos")}
+          >
+            💊 Medicamentos
+          </button>
+
+          <button className="logout-btn" onClick={logout}>
+               Cerrar sesión
+          </button>
+
+        </div>
+
+
+        {/* CONTENIDO */}
+
+        <div className="admin-content">
+
+          
+          {tab === "enfermedades" && <EnfermedadesAdmin/>}
+          {tab === "sintomas" && <SintomasAdmin/>}
+          {tab === "medicamentos" && <MedicamentosAdmin/>}
+
+        </div>
 
       </div>
-
-      {tab === "enfermedades" && <EnfermedadesAdmin/>}
-      {tab === "sintomas" && <SintomasAdmin/>}
-      {tab === "medicamentos" && <MedicamentosAdmin/>}
 
     </div>
 

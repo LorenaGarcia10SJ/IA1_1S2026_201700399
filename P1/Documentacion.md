@@ -84,3 +84,16 @@ Funcionalidades:
 - Administrar medicamentos disponibles
 - Clasificar enfermedades por sistema del cuerpo.
 
+
+
+# Frontend 
+## Funcionamiento de Nueva enfermedad
+- Crear
+- Editar
+- Eliminar
+
+Flujo
+
+Nueva Enfermedad -> Nombre (enfermedad(gripe).)
+                 -> Sintomas (sintomas(gripe, fiebre).)
+                 -> medicamentos medicamento(paracetamol, gripe).

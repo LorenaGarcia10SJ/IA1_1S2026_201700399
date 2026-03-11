@@ -3,11 +3,17 @@ from services.medilogic_service import MediLogicService
 from pydantic import BaseModel
 from security.jwt_handler import crear_token
 from security.auth_middleware import verificar_admin
-
+from typing import List
 
 class Login(BaseModel):
     usuario:str
     password:str
+
+class CrearEnfermedad(BaseModel):
+    nombre : str
+    sintomas : List[str]
+    medicamentos : List[str]
+
 
 def medilogic_router(service: MediLogicService) -> APIRouter:
     
@@ -126,6 +132,26 @@ def medilogic_router(service: MediLogicService) -> APIRouter:
             "usuario": user
         }
 
+    # Obtener medicamentos
+    @router.get("/obtener_medicamentos")
+    def obtener_medicamentos():
+        return {"medicamentos": service.obtener_medicamentos()}
+    
+
+    # Agregar enfermedad (solo admin)
+    @router.post("/admin/agregar_enfermedad")
+    def agregar_enfermedad(
+        data: CrearEnfermedad,
+        user = Depends(verificar_admin)
+    ):
+
+        service.agregar_enfermedad(
+            data.nombre,
+            data.sintomas,
+            data.medicamentos
+        )
+
+        return {"mensaje": "Enfermedad creada"}
     return router
 
 
