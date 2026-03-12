@@ -53,17 +53,17 @@ function Admin() {
           </button>
 
           <button
-            className={tab==="sintomas" ? "active" : ""}
-            onClick={()=>setTab("sintomas")}
-          >
-            🤒 Síntomas
-          </button>
-
-          <button
             className={tab==="medicamentos" ? "active" : ""}
             onClick={()=>setTab("medicamentos")}
           >
-            💊 Medicamentos
+            💊 Administrar medicamentos
+          </button>
+
+          <button
+            className={tab==="carga y descarga de archivos" ? "active" : ""}
+            onClick={()=>setTab("carga y descarga de archivos")}
+          >
+            � Carga y descarga de archivos
           </button>
 
           <button className="logout-btn" onClick={logout}>

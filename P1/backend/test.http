@@ -32,3 +32,6 @@ GET http://localhost:8000/medilogic/sistema/covid
 
 ### obtener sistemas
 GET http://localhost:8000/medilogic/obtener_sistemas
+
+### Obtener medicamentos
+GET http://localhost:8000/medilogic/obtener_medicamentos

@@ -34,6 +34,12 @@ sintomas(gastroenteritis, nauseas).
 sintomas(gastroenteritis, vomitos).
 
 % Medicamentos
+medicamento(paracetamol, gripe).
+medicamento(ibuprofeno, gripe).
+medicamento(omeprazol, gastroenteritis).
+medicamento(antibiotico, bronquitis).
+medicamento(antidiarreico, gastroenteritis).
+medicamento(amoxicilina, bronquitis).
 
 % Contraindicaciones
 contraindicado(paracetamol, alergia_paracetamol).
@@ -93,8 +99,10 @@ afinidad(E, ListaSintomas, Porcentaje) :- contar_coincidencias(E, ListaSintomas,
     Porcentaje is (Coincidencias / Total) * 100.
 
 % Medicamento recomendado(ver contraindicaciones)
+% medicamento(M,Enfermedad) -> M es un medicamento recomendado para tratar la Enfermedad
 % y
 % \+ (member(A, Alergias), contraindicado(M, A)) -> No existe ninguna alergia en la lista de alergias que contraindique el medicamento M.
+medicamento_recomendado( M , Enfermedad, Alergias) :- medicamento(M,Enfermedad), \+ (member(A, Alergias), contraindicado(M, A)).
 
 % Urgencia
 % Si existe un síntoma severo → urgencia alta
@@ -113,6 +121,21 @@ nivel_urgencia(_, baja).
 eliminar_enfermedad(Nombre) :-
     retractall(enfermedad(Nombre)),
     retractall(sintomas(Nombre, _)),
+    retractall(medicamento(_, Nombre)),
     retractall(sistema(Nombre, _)).
 
 % enfermedad creada desde admin
+
+
+% enfermedad creada desde admin
+
+
+% enfermedad creada desde admin
+enfermedad(covid_19).
+sintomas(covid_19,dolor_cabeza).
+sintomas(covid_19,perdida_del_gusto).
+sintomas(covid_19,tos).
+medicamento(acetaminofen,covid_19).
+medicamento(ibuprofeno,covid_19).
+sistema(covid_19,respiratorio).
+sistema(covid_19,nervioso).

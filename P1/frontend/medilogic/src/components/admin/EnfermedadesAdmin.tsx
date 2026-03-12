@@ -10,6 +10,9 @@ function EnfermedadesAdmin() {
   const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false);
   const [enfermedadAEliminar, setEnfermedadAEliminar] = useState<string | null>(null);
 
+  const [modoEditar,setModoEditar] = useState(false);
+  const [enfermedadEditando,setEnfermedadEditando] = useState<string | null>(null);
+
   const [nombre,setNombre] = useState("");
 
   const [sintomasDisponibles,setSintomasDisponibles] = useState<string[]>([]);
@@ -158,54 +161,72 @@ function EnfermedadesAdmin() {
   // AGREGAR ENFERMEDAD
   // -----------------------------
 
-  const agregar = async () => {
+  const guardar = async () => {
 
     if(!nombre.trim()){
-
       alert("Debe ingresar un nombre de enfermedad");
       return;
-
     }
 
     const nombreNormalizado = normalizarNombre(nombre);
 
-    if(enfermedades.includes(nombreNormalizado)){
+    try{
 
-      alert("La enfermedad ya existe");
+      if(modoEditar && enfermedadEditando){
+
+        await fetch(`http://localhost:8000/medilogic/admin/eliminar_enfermedad/${enfermedadEditando}`,{
+          method:"DELETE",
+          headers:{
+            "Authorization":`Bearer ${token}`
+          }
+        });
+
+      }
+
+      const response = await fetch("http://localhost:8000/medilogic/admin/agregar_enfermedad",{
+
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+          "Authorization":`Bearer ${token}`
+        },
+
+        body:JSON.stringify({
+
+          nombre:nombreNormalizado,
+          sintomas:sintomasSeleccionados,
+          medicamentos:medicamentosSeleccionados,
+          sistema:sistemasSeleccionados
+
+        })
+
+      });
+
+      if(response.ok){
+
+        alert(modoEditar ? "Enfermedad actualizada" : "Enfermedad creada");
+
+      }else{
+
+        alert("Error al guardar");
+        return;
+
+      }
+
+    }catch(error){
+
+      alert("Error en el servidor");
       return;
 
     }
-
-    const response = await fetch("http://localhost:8000/medilogic/admin/agregar_enfermedad",{
-
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "Authorization":`Bearer ${token}`
-      },
-      body:JSON.stringify({
-
-        nombre:nombreNormalizado,
-        sintomas:sintomasSeleccionados,
-        medicamentos:medicamentosSeleccionados,
-        sistema:sistemasSeleccionados
-
-      })
-
-    });
-
-    if(response.ok){
-      alert("Se agrego correctamente el registro");
-    }else{
-      alert("Error al agregar la enfermedad");
-      return;
-    }
-
 
     setNombre("");
     setSintomasSeleccionados([]);
     setMedicamentosSeleccionados([]);
     setSistemasSeleccionados([]);
+
+    setModoEditar(false);
+    setEnfermedadEditando(null);
 
     setMostrarFormulario(false);
 
@@ -250,6 +271,39 @@ function EnfermedadesAdmin() {
       alert("❌ Error al eliminar la enfermedad");
     }
   };
+
+  const editarEnfermedad = async (nombre:string) => {
+
+    setModoEditar(true);
+    setEnfermedadEditando(nombre);
+
+    setNombre(formatearNombre(nombre));
+
+    // cargar sintomas
+    const resSintomas = await fetch(`http://localhost:8000/medilogic/sintomas/${nombre}`);
+    const dataSintomas = await resSintomas.json();
+
+    setSintomasSeleccionados((dataSintomas.sintomas || []).map(normalizarNombre));
+
+    // cargar medicamentos
+    const resMed = await fetch(`http://localhost:8000/medilogic/medicamentos/${nombre}`);
+    const dataMed = await resMed.json();
+
+    setMedicamentosSeleccionados((dataMed.medicamentos || []).map(normalizarNombre));
+
+    // cargar sistema
+    const resSis = await fetch(`http://localhost:8000/medilogic/sistema/${nombre}`);
+    const dataSis = await resSis.json();
+
+    if(dataSis.sistema){
+      setSistemasSeleccionados([normalizarNombre(dataSis.sistema)]);
+    }
+
+    setMostrarFormulario(true);
+
+  };
+
+//-------------------------------------
   return(
 
   <div className="tabla-container">
@@ -260,7 +314,19 @@ function EnfermedadesAdmin() {
 
       <button
         className="btn-agregar"
-        onClick={()=>setMostrarFormulario(true)}
+        onClick={()=>{
+
+          setModoEditar(false)
+          setEnfermedadEditando(null)
+
+          setNombre("")
+          setSintomasSeleccionados([])
+          setMedicamentosSeleccionados([])
+          setSistemasSeleccionados([])
+
+          setMostrarFormulario(true)
+
+        }}
       >
         + Nueva
       </button>
@@ -309,6 +375,7 @@ function EnfermedadesAdmin() {
             <td className="acciones">
 
               <button className="btn-editar"
+                onClick={()=>editarEnfermedad(e)}
               >
                 Editar
               </button>
@@ -334,7 +401,7 @@ function EnfermedadesAdmin() {
 
         <div className="modal-content">
 
-          <h3>Nueva Enfermedad</h3>
+          <h3>{modoEditar ? "Editar Enfermedad" : "Nueva Enfermedad"}</h3>
 
           <input
             placeholder="Ingrese el nombre de la enfermedad"
@@ -566,14 +633,18 @@ function EnfermedadesAdmin() {
 
             <button
               className="btn-guardar"
-              onClick={agregar}
+              onClick={guardar}
             >
-              Guardar
+              {modoEditar ? "Guardar" : "Crear"}
             </button>
 
             <button
               className="btn-cancelar"
-              onClick={()=>setMostrarFormulario(false)}
+                onClick={()=>{
+                setMostrarFormulario(false)
+                setModoEditar(false)
+                setEnfermedadEditando(null)
+              }}
             >
               Cancelar
             </button>
@@ -605,6 +676,7 @@ function EnfermedadesAdmin() {
         </div>
       </div>
     )}
+
   </div>
 
   )
