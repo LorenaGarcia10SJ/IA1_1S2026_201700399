@@ -23,6 +23,8 @@ function EnfermedadesAdmin() {
   const [busquedaMedicamento,setBusquedaMedicamento] = useState("");
   const [busquedaSistema,setBusquedaSistema] = useState("");
 
+
+  const [clasificacionFiltro, setClasificacionFiltro] = useState("");
   const token = localStorage.getItem("token");
 
   // -----------------------------
@@ -113,6 +115,8 @@ function EnfermedadesAdmin() {
   const sistemasFiltrados = sistemasDisponibles.filter(s =>
     formatearNombre(s).toLowerCase().includes(busquedaSistema.toLowerCase())
   );
+
+
   // -----------------------------
   // SELECCIONAR / DESELECCIONAR
   // -----------------------------
@@ -207,6 +211,14 @@ function EnfermedadesAdmin() {
 
   };
 
+  //-------------------------------
+  // FILTRO EN TABLA
+  //-------------------------------
+  const enfermedadesFiltradas = enfermedades.filter((e)=>{
+    if(!clasificacionFiltro) return true;
+
+    return sistemas[e] === clasificacionFiltro;
+  });
   return(
 
   <div className="tabla-container">
@@ -224,6 +236,25 @@ function EnfermedadesAdmin() {
 
     </div>
 
+
+   <div style={{marginBottom:"10px"}}>
+    <label>Filtrar por sistema: </label>
+
+    <select
+      value={clasificacionFiltro}
+      onChange={(e)=>setClasificacionFiltro(e.target.value)}
+    >
+      <option value="">Todos</option>
+
+      {sistemasDisponibles.map((s)=>(
+        <option key={s} value={s}>
+          {formatearNombre(s)}
+        </option>
+      ))}
+
+    </select>
+  </div>
+
     <table>
 
       <thead>
@@ -238,7 +269,7 @@ function EnfermedadesAdmin() {
 
       <tbody>
 
-        {enfermedades.map(e=>(
+        {enfermedadesFiltradas.map(e=>(
           <tr key={e}>
 
             <td>{formatearNombre(e)}</td>
