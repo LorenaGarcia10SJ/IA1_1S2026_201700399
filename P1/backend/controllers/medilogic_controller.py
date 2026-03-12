@@ -212,6 +212,31 @@ def medilogic_router(service: MediLogicService) -> APIRouter:
         return {"mensaje": "Archivo .pl cargado correctamente"}
 
 
+    # ------------------------------------
+    # Contraindicaciones
+    # ------------------------------------
+
+    @router.get("/obtener_contraindicaciones")
+    def obtener_contraindicaciones():
+        return {"contraindicaciones": service.obtener_contraindicaciones()}
+
+    # Agregar contraindicacion
+    @router.post("/agregar_contraindicacion")
+    def agregar_contraindicacion(data:dict):
+        service.agregar_contraindicacion(
+            data["medicamento"],
+            data["alergia"]
+        )
+
+        return {"mensaje":"Contraindicación agregada"}
+
+    # Eliminar contraindicacion
+    @router.delete("/eliminar_contraindicacion/{medicamento}/{alergia}")
+    def eliminar_contraindicacion(medicamento: str, alergia: str):
+        service.eliminar_contraindicacion(medicamento, alergia)
+        return {"mensaje": "Contraindicación eliminada"}
+    
+    
     return router
 
 

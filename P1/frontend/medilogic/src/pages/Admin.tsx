@@ -6,7 +6,6 @@ import Navbar from "../components/Navbar";
 import EnfermedadesAdmin from "../components/admin/EnfermedadesAdmin";
 import MedicamentosAdmin from "../components/admin/MedicamentosAdmin";
 import CargaDescargaAdmin from "../components/admin/CargaDescargaAdmin";
-import PrologAdmin from "../components/admin/PrologAdmin";
 
 import "./Admin.css";
 
@@ -82,8 +81,7 @@ function Admin() {
           {tab === "enfermedades" && <EnfermedadesAdmin/>}
           {tab === "medicamentos" && <MedicamentosAdmin/>}
           {tab === "cargaDescarga" && <CargaDescargaAdmin/>}
-          {tab === "prolog" && <PrologAdmin/>}
-
+        
         </div>
 
       </div>

@@ -2,11 +2,13 @@
 :- discontiguous sintomas/2.
 :- discontiguous medicamento/2.
 :- discontiguous sistema/2.
+:- discontiguous contraindicado/2.
 
 :- dynamic enfermedad/1.
 :- dynamic sintomas/2.
 :- dynamic medicamento/2.
 :- dynamic sistema/2.
+:- dynamic contraindicado/2.
 
 % =========================
 % HECHOS
@@ -42,6 +44,7 @@ medicamento(antidiarreico, gastroenteritis).
 medicamento(amoxicilina, bronquitis).
 
 % Contraindicaciones
+% contraindicado(Medicamento, Alergia) -> El medicamento Medicamento está contraindicado para personas con la alergia Alergia
 contraindicado(paracetamol, alergia_paracetamol).
 contraindicado(amoxicilina, alergia_penicilina).
 contraindicado(antibiotico, resistencia_antibiotica).
@@ -130,3 +133,4 @@ eliminar_enfermedad(Nombre) :-
 
 
 % enfermedad creada desde admin
+

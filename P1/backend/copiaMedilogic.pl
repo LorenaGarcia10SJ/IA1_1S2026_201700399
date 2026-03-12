@@ -34,6 +34,7 @@ sintomas(gastroenteritis, nauseas).
 sintomas(gastroenteritis, vomitos).
 
 % Medicamentos
+% medicamento(Medicamento, Enfermedad) -> Medicamento es un medicamento recomendado para tratar la Enfermedad
 medicamento(paracetamol, gripe).
 medicamento(ibuprofeno, gripe).
 medicamento(omeprazol, gastroenteritis).

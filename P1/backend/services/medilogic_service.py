@@ -84,3 +84,16 @@ class MediLogicService:
     # medilogic_service.py
     def eliminar_enfermedad(self, nombre: str) -> bool:
         return self.repo.eliminar_enfermedad(nombre)
+    
+    # Obtener contraindicaciones
+    def obtener_contraindicaciones(self) -> List[Dict[str, str]]:
+        return self.repo.obtener_contraindicaciones()       
+    
+    # Agregar contraindicacion
+    def agregar_contraindicacion(self, medicamento: str, alergia: str):
+        return self.repo.agregar_contraindicacion(medicamento, alergia)     
+    
+    # Eliminar contraindicacion
+    def eliminar_contraindicacion(self, medicamento: str, alergia: str):
+        return self.repo.eliminar_contraindicacion(medicamento, alergia)    
+    

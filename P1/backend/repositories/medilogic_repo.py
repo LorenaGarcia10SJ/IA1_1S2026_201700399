@@ -210,3 +210,41 @@ class MediLogicRepo:
         self._consult_file()
 
         return True
+    
+
+    # Obtener contraindicaciones
+    def obtener_contraindicaciones(self) -> List[Dict[str, Any]]:
+        resultado = list(self.prolog.query("contraindicado(M,A)"))
+        contraindicaciones = []
+        for r in resultado:
+            contraindicaciones.append({
+                "medicamento": r["M"],
+                "alergia": r["A"]
+            })
+        return contraindicaciones
+    
+    # Agregar contraindicacion
+    def agregar_contraindicacion(self, medicamento: str, alergia: str):
+        with open(self.prolog_file, "a", encoding="utf-8") as f:
+            f.write(f"\ncontraindicado({medicamento},{alergia}).\n")
+        self._consult_file()    
+
+    # Eliminar contraindicacion
+    def eliminar_contraindicacion(self, medicamento: str, alergia: str):        
+        medicamento = self._to_prolog_atom(medicamento)
+        alergia = self._to_prolog_atom(alergia)
+
+        with open(self.prolog_file, "r", encoding="utf-8") as f:
+            lineas = f.readlines()
+
+        nuevas_lineas = []
+
+        for linea in lineas:
+            if f"contraindicado({medicamento},{alergia})" in linea:
+                continue
+            nuevas_lineas.append(linea)
+
+        with open(self.prolog_file, "w", encoding="utf-8") as f:
+            f.writelines(nuevas_lineas)
+
+        self._consult_file()        
