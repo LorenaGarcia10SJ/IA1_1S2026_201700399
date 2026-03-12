@@ -81,3 +81,6 @@ class MediLogicService:
     def obtener_sistemas(self) -> List[str]:
         return self.repo.obtener_sistemas()     
     
+    # medilogic_service.py
+    def eliminar_enfermedad(self, nombre: str) -> bool:
+        return self.repo.eliminar_enfermedad(nombre)

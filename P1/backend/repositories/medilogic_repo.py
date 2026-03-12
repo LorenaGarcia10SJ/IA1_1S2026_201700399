@@ -180,3 +180,33 @@ class MediLogicRepo:
         prolog.consult("medilogic.pl")
         resultado = list(prolog.query("sistema(_,S)"))
         return list({r["S"] for r in resultado})
+    
+    # Eliminar enfermedad del sistema (solo admin)
+    def eliminar_enfermedad(self, nombre: str):
+        nombre = self._to_prolog_atom(nombre)
+
+        # Leer todo el archivo
+        with open(self.prolog_file, "r", encoding="utf-8") as f:
+            lineas = f.readlines()
+
+        # Filtrar las líneas que no contengan la enfermedad
+        nuevas_lineas = []
+        patrones = [
+            f"enfermedad({nombre})",
+            f"sintomas({nombre},",
+            f"medicamento(",
+            f"sistema({nombre},"
+        ]
+
+        for linea in lineas:
+            if not any(pat in linea for pat in patrones):
+                nuevas_lineas.append(linea)
+
+        # Sobrescribir el archivo
+        with open(self.prolog_file, "w", encoding="utf-8") as f:
+            f.writelines(nuevas_lineas)
+
+        # Recargar Prolog
+        self._consult_file()
+
+        return True

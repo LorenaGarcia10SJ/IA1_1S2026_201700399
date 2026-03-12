@@ -3,6 +3,11 @@
 :- discontiguous medicamento/2.
 :- discontiguous sistema/2.
 
+:- dynamic enfermedad/1.
+:- dynamic sintomas/2.
+:- dynamic medicamento/2.
+:- dynamic sistema/2.
+
 % =========================
 % HECHOS
 % =========================
@@ -29,12 +34,6 @@ sintomas(gastroenteritis, nauseas).
 sintomas(gastroenteritis, vomitos).
 
 % Medicamentos
-medicamento(paracetamol, gripe).
-medicamento(ibuprofeno, gripe).
-medicamento(omeprazol, gastroenteritis).
-medicamento(antibiotico, bronquitis).
-medicamento(antidiarreico, gastroenteritis).
-medicamento(amoxicilina, bronquitis).
 
 % Contraindicaciones
 contraindicado(paracetamol, alergia_paracetamol).
@@ -68,7 +67,6 @@ urgencia(vomitos, moderado).
 sistema(gripe, respiratorio).
 sistema(bronquitis, respiratorio).
 sistema(gastroenteritis, digestivo).
-sistema(covid, respiratorio).
 
 % =========================
 % Reglas - ayudan en el backend
@@ -95,10 +93,8 @@ afinidad(E, ListaSintomas, Porcentaje) :- contar_coincidencias(E, ListaSintomas,
     Porcentaje is (Coincidencias / Total) * 100.
 
 % Medicamento recomendado(ver contraindicaciones)
-% medicamento(M,Enfermedad) -> M es un medicamento recomendado para tratar la Enfermedad
 % y
 % \+ (member(A, Alergias), contraindicado(M, A)) -> No existe ninguna alergia en la lista de alergias que contraindique el medicamento M.
-medicamento_recomendado( M , Enfermedad, Alergias) :- medicamento(M,Enfermedad), \+ (member(A, Alergias), contraindicado(M, A)).
 
 % Urgencia
 % Si existe un síntoma severo → urgencia alta
@@ -112,20 +108,11 @@ nivel_urgencia(ListaSintomas, media) :-
 % Si no hay severos ni moderados
 nivel_urgencia(_, baja).
 
-% enfermedad creada desde admin
-% enfermedad(covid).
-% sintomas(covid,dolor_cabeza).
-% sintomas(covid,perdida_del_gusto).
-% medicamento(acetaminofen,covid).
-% medicamento(paracetamol,covid).
-
-
+% eliminar_enfermedad(+Nombre)
+% Elimina la enfermedad y todas sus relaciones (sintomas, medicamentos, sistema)
+eliminar_enfermedad(Nombre) :-
+    retractall(enfermedad(Nombre)),
+    retractall(sintomas(Nombre, _)),
+    retractall(sistema(Nombre, _)).
 
 % enfermedad creada desde admin
-enfermedad(covid).
-sintomas(covid,dolor_cabeza).
-sintomas(covid,perdida_del_gusto).
-sintomas(covid,fiebre).
-medicamento(acetaminofen,covid).
-medicamento(paracetamol,covid).
-sistema(covid,respiratorio).

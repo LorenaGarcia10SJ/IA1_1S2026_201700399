@@ -168,6 +168,19 @@ def medilogic_router(service: MediLogicService) -> APIRouter:
         resultado = service.obtener_sistemas()
         return {"sistemas": resultado}
     
+    # medilogic_controller.py
+    @router.delete("/admin/eliminar_enfermedad/{nombre}")
+    def eliminar_enfermedad(nombre: str, user=Depends(verificar_admin)):
+        # Normalizar nombre como hacemos en frontend
+        nombre_normalizado = nombre.lower().replace(" ", "_")
+
+        eliminado = service.eliminar_enfermedad(nombre_normalizado)
+        if not eliminado:
+            return {"error": "Enfermedad no encontrada"}
+        
+        return {"ok": True, "mensaje": f"Enfermedad '{nombre_normalizado}' eliminada"}
+        
+    
     
     return router
 

@@ -7,6 +7,9 @@ function EnfermedadesAdmin() {
   const [sistemas, setSistemas] = useState<{[nombre:string]: string}>({});
   const [mostrarFormulario,setMostrarFormulario] = useState(false);
 
+  const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false);
+  const [enfermedadAEliminar, setEnfermedadAEliminar] = useState<string | null>(null);
+
   const [nombre,setNombre] = useState("");
 
   const [sintomasDisponibles,setSintomasDisponibles] = useState<string[]>([]);
@@ -219,6 +222,34 @@ function EnfermedadesAdmin() {
 
     return sistemas[e] === clasificacionFiltro;
   });
+
+
+  const abrirModalEliminar = (nombre: string) => {
+    setEnfermedadAEliminar(nombre);
+    setMostrarModalEliminar(true);
+  };
+
+
+  const confirmarEliminar = async () => {
+    if (!enfermedadAEliminar) return;
+
+    const response = await fetch(`http://localhost:8000/medilogic/admin/eliminar_enfermedad/${enfermedadAEliminar}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+    });
+
+    if (response.ok) {
+      alert("✅ Enfermedad eliminada correctamente");
+      setMostrarModalEliminar(false);
+      setEnfermedadAEliminar(null);
+      cargar(); // recarga las enfermedades
+      cargarSistemas(); // recarga sistemas
+    } else {
+      alert("❌ Error al eliminar la enfermedad");
+    }
+  };
   return(
 
   <div className="tabla-container">
@@ -277,11 +308,14 @@ function EnfermedadesAdmin() {
             
             <td className="acciones">
 
-              <button className="btn-editar">
+              <button className="btn-editar"
+              >
                 Editar
               </button>
 
-              <button className="btn-eliminar">
+              <button className="btn-eliminar"
+                onClick={()=>abrirModalEliminar(e)}
+              >
                 Eliminar
               </button>
 
@@ -552,6 +586,25 @@ function EnfermedadesAdmin() {
 
     )}
 
+
+    {mostrarModalEliminar && (
+      <div className="modal">
+        <div className="modal-content">
+          <h3>Confirmar Eliminación</h3>
+          <p>¿Está seguro que desea eliminar la enfermedad <strong>{formatearNombre(enfermedadAEliminar!)}</strong>?</p>
+
+          <div className="modal-buttons">
+            <button className="btn-guardar" onClick={confirmarEliminar}>
+              Sí, eliminar
+            </button>
+
+            <button className="btn-cancelar" onClick={() => setMostrarModalEliminar(false)}>
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
   </div>
 
   )
