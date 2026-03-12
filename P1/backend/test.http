@@ -25,3 +25,10 @@ Content-Type: application/json
   "usuario":"admin",
   "password":"1234"
 }
+
+### Obtener sistemas
+GET http://localhost:8000/medilogic/sistema/covid
+
+
+### obtener sistemas
+GET http://localhost:8000/medilogic/obtener_sistemas

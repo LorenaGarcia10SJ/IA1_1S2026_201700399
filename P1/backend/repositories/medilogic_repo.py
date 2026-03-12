@@ -145,7 +145,8 @@ class MediLogicRepo:
         resultado = list(prolog.query("medicamento(M,_)"))
         return list({r["M"] for r in resultado})    
     
-    def agregar_enfermedad(self,nombre: str, sintomas: List[str], medicamentos: List[str]):
+    # Agregar nueva enfermedad al sistema
+    def agregar_enfermedad(self,nombre: str, sintomas: List[str], medicamentos: List[str], sistema: List[str]):
 
         with open(self.prolog_file, "a", encoding="utf-8") as f:
 
@@ -158,6 +159,24 @@ class MediLogicRepo:
 
             for m in medicamentos:
                 f.write(f"medicamento({m},{nombre}).\n")
+                
+            for h in sistema:
+                f.write(f"sistema({nombre},{h}).\n")
 
         # recargar prolog
         self._consult_file()
+
+    # Obtener clasificacion de una enfermedad
+    def obtener_sistema_por_enfermedad(self, nombre: str):
+        consulta = f"sistema({nombre}, S)"
+        resultado = list(self.prolog.query(consulta))
+        if not resultado:
+            return {"error": "No se encontró sistema para esta enfermedad"}
+        return {"enfermedad": nombre, "sistema": resultado[0]["S"]}
+    
+    # Obtener todos los sistemas
+    def obtener_sistemas(self) -> List[str]:
+        prolog = Prolog()
+        prolog.consult("medilogic.pl")
+        resultado = list(prolog.query("sistema(_,S)"))
+        return list({r["S"] for r in resultado})

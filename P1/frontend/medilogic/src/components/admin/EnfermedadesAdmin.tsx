@@ -4,6 +4,7 @@ import "./EnfermedadAdmin.css";
 function EnfermedadesAdmin() {
 
   const [enfermedades,setEnfermedades] = useState<string[]>([]);
+  const [sistemas, setSistemas] = useState<{[nombre:string]: string}>({});
   const [mostrarFormulario,setMostrarFormulario] = useState(false);
 
   const [nombre,setNombre] = useState("");
@@ -14,8 +15,13 @@ function EnfermedadesAdmin() {
   const [medicamentosDisponibles,setMedicamentosDisponibles] = useState<string[]>([]);
   const [medicamentosSeleccionados,setMedicamentosSeleccionados] = useState<string[]>([]);
 
+  const [sistemasDisponibles,setSistemasDisponibles] = useState<string[]>([]);
+  const [sistemasSeleccionados,setSistemasSeleccionados] = useState<string[]>([]);
+
+
   const [busquedaSintoma,setBusquedaSintoma] = useState("");
   const [busquedaMedicamento,setBusquedaMedicamento] = useState("");
+  const [busquedaSistema,setBusquedaSistema] = useState("");
 
   const token = localStorage.getItem("token");
 
@@ -62,13 +68,35 @@ function EnfermedadesAdmin() {
 
   };
 
+  const cargarSistemas = async () => {
+    const nuevosSistemas: { [nombre: string]: string } = {};
+    for (const e of enfermedades) {
+      const res = await fetch(`http://localhost:8000/medilogic/sistema/${e}`);
+      const data = await res.json();
+      nuevosSistemas[e] = data.sistema ?? "-";
+    }
+    setSistemas(nuevosSistemas);
+  };
+
+  const cargarTodosSistemas = async () => {
+    const res = await fetch("http://localhost:8000/medilogic/obtener_sistemas");
+    const data = await res.json();
+    setSistemasDisponibles((data.sistemas || []).map(normalizarNombre));
+
+  };
+
   useEffect(()=>{
 
     cargar();
     cargarSintomas();
     cargarMedicamentos();
+    cargarTodosSistemas();
 
   },[]);
+
+  useEffect(() => {
+    cargarSistemas();
+  }, [enfermedades]);
 
   // -----------------------------
   // FILTROS AUTOCOMPLETE
@@ -82,6 +110,9 @@ function EnfermedadesAdmin() {
     formatearNombre(m).toLowerCase().includes(busquedaMedicamento.toLowerCase())
   );
 
+  const sistemasFiltrados = sistemasDisponibles.filter(s =>
+    formatearNombre(s).toLowerCase().includes(busquedaSistema.toLowerCase())
+  );
   // -----------------------------
   // SELECCIONAR / DESELECCIONAR
   // -----------------------------
@@ -102,6 +133,16 @@ function EnfermedadesAdmin() {
       setMedicamentosSeleccionados(medicamentosSeleccionados.filter(x=>x!==m));
     }else{
       setMedicamentosSeleccionados([...medicamentosSeleccionados,m]);
+    }
+
+  };
+
+  const toggleSistema = (s:string) => {
+
+    if(sistemasSeleccionados.includes(s)){
+      setSistemasSeleccionados(sistemasSeleccionados.filter(x=>x!==s));
+    } else {                              
+      setSistemasSeleccionados([...sistemasSeleccionados,s]);
     }
 
   };
@@ -128,7 +169,7 @@ function EnfermedadesAdmin() {
 
     }
 
-    await fetch("http://localhost:8000/medilogic/admin/agregar_enfermedad",{
+    const response = await fetch("http://localhost:8000/medilogic/admin/agregar_enfermedad",{
 
       method:"POST",
       headers:{
@@ -139,19 +180,30 @@ function EnfermedadesAdmin() {
 
         nombre:nombreNormalizado,
         sintomas:sintomasSeleccionados,
-        medicamentos:medicamentosSeleccionados
+        medicamentos:medicamentosSeleccionados,
+        sistema:sistemasSeleccionados
 
       })
 
     });
 
+    if(response.ok){
+      alert("Se agrego correctamente el registro");
+    }else{
+      alert("Error al agregar la enfermedad");
+      return;
+    }
+
+
     setNombre("");
     setSintomasSeleccionados([]);
     setMedicamentosSeleccionados([]);
+    setSistemasSeleccionados([]);
 
     setMostrarFormulario(false);
 
     cargar();
+    cargarSistemas();
 
   };
 
@@ -178,6 +230,7 @@ function EnfermedadesAdmin() {
 
         <tr>
           <th>Nombre</th>
+          <th>Sistema</th>
           <th>Acciones</th>
         </tr>
 
@@ -189,7 +242,8 @@ function EnfermedadesAdmin() {
           <tr key={e}>
 
             <td>{formatearNombre(e)}</td>
-
+            <td>{sistemas[e] ? formatearNombre(sistemas[e]) : "Cargando..."}</td>
+            
             <td className="acciones">
 
               <button className="btn-editar">
@@ -360,6 +414,80 @@ function EnfermedadesAdmin() {
                   {formatearNombre(m)}
 
                   <button onClick={()=>toggleMedicamento(m)}>×</button>
+
+                </div>
+
+              ))}
+
+            </div>
+
+          </div>
+
+
+          {/* Sistemas */}
+
+          <div className="selector">
+
+            <h4>Clasificación </h4>
+
+            <input
+              placeholder="Buscar o agregar clasificación"
+              value={busquedaSistema}
+              onChange={(e)=>setBusquedaSistema(e.target.value)}
+            />
+
+            {busquedaSistema && (
+
+              <div className="autocomplete-list">
+
+                {sistemasFiltrados.map(s=>(
+
+                  <div
+                    key={s}
+                    className="autocomplete-item"
+                    onClick={()=>{
+                      toggleSistema(s)
+                      setBusquedaSistema("")
+                    }}
+                  >
+                    {formatearNombre(s)}
+                  </div>
+
+                ))}
+
+                {!sistemasDisponibles.includes(normalizarNombre(busquedaSistema)) && (
+
+                  <div
+                    className="autocomplete-item nuevo"
+                    onClick={()=>{
+
+                      const n = normalizarNombre(busquedaSistema)
+
+                      setSistemasDisponibles([...sistemasDisponibles,n])
+                      setSistemasSeleccionados([...sistemasSeleccionados,n])
+
+                      setBusquedaSistema("")
+
+                    }}
+                  >
+                    ➕ Crear "{busquedaSistema}"
+                  </div>
+
+                )}
+
+              </div>
+
+            )}
+
+            <div className="chips-container">
+
+              {sistemasSeleccionados.map(s=>(
+
+                <div key={s} className="chip">
+
+                  {formatearNombre(s)}
+
+                  <button onClick={()=>toggleSistema(s)}>×</button>
 
                 </div>
 

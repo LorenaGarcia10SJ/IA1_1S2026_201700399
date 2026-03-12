@@ -27,7 +27,7 @@ function Admin() {
   const logout = () => {
 
     localStorage.removeItem("token");
-    navigate("/admin-login");
+    navigate("/");
 
   };
 

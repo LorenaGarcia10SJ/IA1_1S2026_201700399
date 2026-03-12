@@ -13,6 +13,7 @@ class CrearEnfermedad(BaseModel):
     nombre : str
     sintomas : List[str]
     medicamentos : List[str]
+    sistema : List[str]
 
 
 def medilogic_router(service: MediLogicService) -> APIRouter:
@@ -148,10 +149,26 @@ def medilogic_router(service: MediLogicService) -> APIRouter:
         service.agregar_enfermedad(
             data.nombre,
             data.sintomas,
-            data.medicamentos
+            data.medicamentos,
+            data.sistema
         )
 
         return {"mensaje": "Enfermedad creada"}
+    
+    
+    # Obtener sistema por enfermedad
+    @router.get("/sistema/{nombre}")
+    def obtener_sistema_por_enfermedad(nombre: str):
+        resultado = service.obtener_sistema_por_enfermedad(nombre)
+        return resultado
+    
+    # Obtener todos los sistemas
+    @router.get("/obtener_sistemas")
+    def obtener_sistemas():
+        resultado = service.obtener_sistemas()
+        return {"sistemas": resultado}
+    
+    
     return router
 
 
@@ -168,33 +185,3 @@ def medilogic_router(service: MediLogicService) -> APIRouter:
 
 
 
-
-
-"""     @router.post("/diagnostico_completo")
-    def diagnostico_completo(data: dict = Body(...)):
-
-        sintomas = data.get("sintomas")
-        alergias = data.get("alergias")
-
-        if not sintomas or not isinstance(sintomas, list):
-            return {"error": "Debe enviar una lista de sintomas"}
-
-        if not alergias or not isinstance(alergias, list):
-            return {"error": "Debe enviar una lista de alergias"}
-
-        resultado = service.obtener_diagnostico_completo(sintomas, alergias)
-
-        return {"diagnostico_completo": resultado}
-    
-
-    @router.post("/diagnostico-completo")
-    def diagnostico_completo(data: dict = Body(...)):
-
-        sintomas = data.get("sintomas")
-        alergias = data.get("alergias", [])
-
-        if not sintomas or not isinstance(sintomas, list):
-            return {"error": "Debe enviar una lista de sintomas"}
-
-        resultado = service.obtener_diagnostico_completo(sintomas, alergias)
-        return resultado """

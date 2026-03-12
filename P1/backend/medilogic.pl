@@ -1,6 +1,7 @@
 :- discontiguous enfermedad/1.
 :- discontiguous sintomas/2.
 :- discontiguous medicamento/2.
+:- discontiguous sistema/2.
 
 % =========================
 % HECHOS
@@ -61,6 +62,14 @@ urgencia(dolor_abdominal, moderado).
 urgencia(diarrea, leve).
 urgencia(nauseas, leve).
 urgencia(vomitos, moderado).
+
+
+% Clasificar enfermedad por sistema del cuerpo
+sistema(gripe, respiratorio).
+sistema(bronquitis, respiratorio).
+sistema(gastroenteritis, digestivo).
+sistema(covid, respiratorio).
+
 % =========================
 % Reglas - ayudan en el backend
 % =========================
@@ -104,8 +113,19 @@ nivel_urgencia(ListaSintomas, media) :-
 nivel_urgencia(_, baja).
 
 % enfermedad creada desde admin
+% enfermedad(covid).
+% sintomas(covid,dolor_cabeza).
+% sintomas(covid,perdida_del_gusto).
+% medicamento(acetaminofen,covid).
+% medicamento(paracetamol,covid).
+
+
+
+% enfermedad creada desde admin
 enfermedad(covid).
 sintomas(covid,dolor_cabeza).
 sintomas(covid,perdida_del_gusto).
+sintomas(covid,fiebre).
 medicamento(acetaminofen,covid).
 medicamento(paracetamol,covid).
+sistema(covid,respiratorio).

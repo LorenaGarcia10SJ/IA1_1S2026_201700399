@@ -70,5 +70,14 @@ class MediLogicService:
 
 
     # Agregar enfermedad
-    def agregar_enfermedad(self, nombre: str, sintomas: List[str], medicamentos: List[str]):
-        return self.repo.agregar_enfermedad(nombre, sintomas, medicamentos  )
+    def agregar_enfermedad(self, nombre: str, sintomas: List[str], medicamentos: List[str], sistema:  List[str]):
+        return self.repo.agregar_enfermedad(nombre, sintomas, medicamentos, sistema)
+    
+    # Obtener clasificacion de enfermedad
+    def obtener_sistema_por_enfermedad(self, nombre: str):
+        return self.repo.obtener_sistema_por_enfermedad(nombre)
+
+    # Obtener todos los sistemas
+    def obtener_sistemas(self) -> List[str]:
+        return self.repo.obtener_sistemas()     
+    
