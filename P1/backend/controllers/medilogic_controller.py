@@ -1,9 +1,13 @@
-from fastapi import APIRouter, Body, Depends
+from fastapi import APIRouter, Body, Depends, UploadFile, File
+from fastapi.responses import FileResponse
 from services.medilogic_service import MediLogicService
 from pydantic import BaseModel
 from security.jwt_handler import crear_token
 from security.auth_middleware import verificar_admin
 from typing import List
+import shutil
+import os
+
 
 class Login(BaseModel):
     usuario:str
@@ -15,6 +19,7 @@ class CrearEnfermedad(BaseModel):
     medicamentos : List[str]
     sistema : List[str]
 
+PL_FILE_PATH = "../backend/medilogic.pl"
 
 def medilogic_router(service: MediLogicService) -> APIRouter:
     
@@ -181,7 +186,32 @@ def medilogic_router(service: MediLogicService) -> APIRouter:
         return {"ok": True, "mensaje": f"Enfermedad '{nombre_normalizado}' eliminada"}
         
     
-    
+    # ------------------------------------
+    # Carga y descarga de archivo .pl
+    # ------------------------------------
+
+    @router.get("/descargar_pl")
+    def descargar_pl(user=Depends(verificar_admin)):
+        if not os.path.exists(PL_FILE_PATH):
+            return {"error": "Archivo no existe"}
+        return FileResponse(PL_FILE_PATH, media_type="text/plain", filename="medilogic.pl")
+
+    @router.post("/cargar_pl")
+    def cargar_pl(file: UploadFile = File(...), user = Depends(verificar_admin)):
+
+        if not file.filename.endswith(".pl"):
+            return {"error": "El archivo debe ser un .pl"}
+
+        # Guardar el archivo reemplazando el anterior
+        with open(PL_FILE_PATH, "wb") as f:
+            shutil.copyfileobj(file.file, f)
+
+        # Recargar Prolog
+        service.repo._consult_file()
+
+        return {"mensaje": "Archivo .pl cargado correctamente"}
+
+
     return router
 
 

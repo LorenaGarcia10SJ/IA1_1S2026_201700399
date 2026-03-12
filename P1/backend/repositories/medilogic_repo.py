@@ -119,30 +119,22 @@ class MediLogicRepo:
     
     # Obtener todos los sintomas registrados en Prolog
     def obtener_sintomas(self) -> List[str]:
-        prolog = Prolog()
-        prolog.consult("medilogic.pl")
-        resultado = list(prolog.query("sintomas(_,S)"))
+        resultado = list(self.prolog.query("sintomas(_,S)"))
         return list({r["S"] for r in resultado})
     
     # Obtener alergias registradas en Prolog
     def obtener_alergias(self) -> List[str]:
-        prolog = Prolog()
-        prolog.consult("medilogic.pl")
-        resultado = list(prolog.query("contraindicado(_,A)"))
+        resultado = list(self.prolog.query("contraindicado(_,A)"))
         return list({r["A"] for r in resultado})
     
     # Obtener enfermedades cronicas registradas en Prolog
     def obtener_enfermedades_cronicas(self) -> List[str]:
-        prolog = Prolog()
-        prolog.consult("medilogic.pl")
-        resultado = list(prolog.query("enfermedad_cronica(E)"))
+        resultado = list(self.prolog.query("enfermedad_cronica(E)"))
         return list({r["E"] for r in resultado})    
     
     # Obtener medicamentos registrados en Prolog
     def obtener_medicamentos(self) -> List[str]:
-        prolog = Prolog()
-        prolog.consult("medilogic.pl")
-        resultado = list(prolog.query("medicamento(M,_)"))
+        resultado = list(self.prolog.query("medicamento(M,_)"))
         return list({r["M"] for r in resultado})    
     
     # Agregar nueva enfermedad al sistema
@@ -176,9 +168,7 @@ class MediLogicRepo:
     
     # Obtener todos los sistemas
     def obtener_sistemas(self) -> List[str]:
-        prolog = Prolog()
-        prolog.consult("medilogic.pl")
-        resultado = list(prolog.query("sistema(_,S)"))
+        resultado = list(self.prolog.query("sistema(_,S)"))
         return list({r["S"] for r in resultado})
     
     # Eliminar enfermedad del sistema (solo admin)

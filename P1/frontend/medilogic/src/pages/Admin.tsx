@@ -4,8 +4,9 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
 import EnfermedadesAdmin from "../components/admin/EnfermedadesAdmin";
-import SintomasAdmin from "../components/admin/SintomasAdmin";
 import MedicamentosAdmin from "../components/admin/MedicamentosAdmin";
+import CargaDescargaAdmin from "../components/admin/CargaDescargaAdmin";
+import PrologAdmin from "../components/admin/PrologAdmin";
 
 import "./Admin.css";
 
@@ -60,10 +61,10 @@ function Admin() {
           </button>
 
           <button
-            className={tab==="carga y descarga de archivos" ? "active" : ""}
-            onClick={()=>setTab("carga y descarga de archivos")}
+            className={tab==="cargaDescarga" ? "active" : ""}
+            onClick={()=>setTab("cargaDescarga")}
           >
-            � Carga y descarga de archivos
+            � Gestionar archivos
           </button>
 
           <button className="logout-btn" onClick={logout}>
@@ -79,8 +80,9 @@ function Admin() {
 
           
           {tab === "enfermedades" && <EnfermedadesAdmin/>}
-          {tab === "sintomas" && <SintomasAdmin/>}
           {tab === "medicamentos" && <MedicamentosAdmin/>}
+          {tab === "cargaDescarga" && <CargaDescargaAdmin/>}
+          {tab === "prolog" && <PrologAdmin/>}
 
         </div>
 
