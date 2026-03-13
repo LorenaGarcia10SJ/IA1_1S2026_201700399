@@ -126,11 +126,3 @@ eliminar_enfermedad(Nombre) :-
     retractall(sintomas(Nombre, _)),
     retractall(medicamento(_, Nombre)),
     retractall(sistema(Nombre, _)).
-
-
-
-% enfermedad creada desde admin
-
-
-% enfermedad creada desde admin
-

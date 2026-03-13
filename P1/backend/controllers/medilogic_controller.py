@@ -7,7 +7,35 @@ from security.auth_middleware import verificar_admin
 from typing import List
 import shutil
 import os
+from services.rpa_service import RPAService
+from services.correo_service import CorreoService
+from services.bitacora_service import Bitacora
+from dotenv import load_dotenv
 
+load_dotenv()
+
+# Variables de correo desde .env
+SMTP_HOST = os.getenv("SMTP_HOST")
+SMTP_PORT = int(os.getenv("SMTP_PORT"))
+SMTP_USER = os.getenv("SMTP_USER")
+EMAIL_FROM = os.getenv("EMAIL_FROM")
+SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
+
+# Rutas de archivos
+PL_FILE_PATH = "../backend/medilogic.pl"
+BITACORA_PATH = "logs/bitacora.txt"
+
+# Inicializamos servicios que se usarán en RPA
+bitacora = Bitacora(BITACORA_PATH)
+
+correo = CorreoService(
+    smtp_host=SMTP_HOST,
+    smtp_port=SMTP_PORT,
+    smtp_user=SMTP_USER,
+    smtp_password=SMTP_PASSWORD,
+    email_from=EMAIL_FROM,
+    bitacora=bitacora
+)
 
 class Login(BaseModel):
     usuario:str
@@ -237,6 +265,18 @@ def medilogic_router(service: MediLogicService) -> APIRouter:
         return {"mensaje": "Contraindicación eliminada"}
     
     
+    # --------------------------------
+    # RPA cargar enfermedades
+    # --------------------------------
+
+    rpa = RPAService(service, correo, bitacora)
+
+    @router.post("/rpa_cargar_enfermedades")
+    def ejecutar_rpa(user = Depends(verificar_admin)):
+        rpa.ejecutar()
+        return {"mensaje":"RPA ejecutado correctamente"}
+
+
     return router
 
 

@@ -35,3 +35,8 @@ GET http://localhost:8000/medilogic/obtener_sistemas
 
 ### Obtener medicamentos
 GET http://localhost:8000/medilogic/obtener_medicamentos
+
+
+### EJECUTAR RPA
+POST http://localhost:8000/medilogic/rpa_cargar_enfermedades
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjoiYWRtaW4iLCJyb2wiOiJhZG1pbiIsImV4cCI6MTc3MzQyOTU4MH0.0d2vajFVL-fyZjNoQrlu8B3pk4DqrmGxlfoSbC7_rZM

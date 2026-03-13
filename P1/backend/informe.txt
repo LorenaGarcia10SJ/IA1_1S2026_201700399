@@ -1,0 +1,18 @@
+RPA MediLogic - Informe
+Fecha: 13/03/2026
+Total enfermedades: 2
+
+Enfermedad: varicela
+Sintomas: fiebre, sarpullido, picazon
+Medicamentos: paracetamol
+Sistema: inmunologico
+
+-----------------
+
+Enfermedad: hipotiroidismo
+Sintomas: fatiga, aumento_peso
+Medicamentos: levotiroxina
+Sistema: endocrino
+
+-----------------
+

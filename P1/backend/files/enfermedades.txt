@@ -1,0 +1,15 @@
+Nombre: varicela
+Descripcion: enfermedad viral contagiosa
+Sintomas: fiebre, sarpullido, picazon
+Medicamentos: paracetamol
+Contraindicados: alergia_paracetamol
+Sistema: inmunologico
+Tipo: viral
+
+Nombre: hipotiroidismo
+Descripcion: problema en la tiroides
+Sintomas: fatiga, aumento_peso
+Medicamentos: levotiroxina
+Contraindicados: alergia_levotiroxina
+Sistema: endocrino
+Tipo: cronico
