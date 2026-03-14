@@ -1,33 +1,55 @@
-Cómo correr la API
+[REGRESAR](../README.md)
 
-Esta guía te ayudará a poner en marcha la API de CMDB en tu entorno local utilizando Node.js, Express y PostgreSQL.
-1. Instalar dependencias
+# Cómo correr la API
 
-npm install
+Esta guía explica cómo poner en funcionamiento MediLogic en tu computadora usando Python, FastAPI, Prolog y el frontend en React + Vite.
+
+1. Instalar dependencias del backend
+
+```
+cd backend
+pip install fastapi uvicorn pyswip python-dotenv
+```
+
+Explicación:
+- fastapi → framework web para crear la API.
+- uvicorn → servidor para ejecutar la API.
+- pyswip → conecta Python con Prolog.
+- python-dotenv → permite cargar variables desde un archivo .env.
 
 2. Configurar variables de entorno
 
-    Crear un archivo -env en la carpeta Api
+La API necesita información para enviar correos electrónicos.
+- En la carpeta backend, crea un archivo llamado .env.
+- Copia y completa las siguientes líneas con tus datos de correo:
 
-DB_USER=
-DB_PASSWORD=
-DB_NAME=
-DB_HOST=
-DB_PORT=
+```
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_USER=tu_correo@gmail.com
+EMAIL_FROM=tu_correo@gmail.com
+SMTP_PASSWORD=tu_contraseña_de_app
+```
+Importante: Si se usa Gmail, se necesita crear una contraseña de aplicación desde tu cuenta de Google.
 
-3. Crear las tablas en PostgreSQL
+3. Ejecutar la API
 
-Ejecuta el script SQL proporcionado en el modelo de base de datos.
-4. Cargar datos iniciales
+Desde la terminal, estando en la carpeta /backend, ejecutar:
+```
+uvicorn main:app --reload
+```
 
-Desde la terminal, en la raíz del proyecto (carpeta Api), ejecuta el siguiente comando para insertar datos:
+4. Instalar y ejecutar el frontend
 
-npm run seed
+Abrir otra terminal e ingresar a la carpeta /frontend, ejecutar:
 
-5. Ejecutar la API
+```bash
+npm install     #Instalar dependencias de Node.js
+npm run dev     #Ejecutar el frontend:
+```
 
-Desde la terminal, en la raíz del proyecto (carpeta Api), ejecuta el siguiente comando:
+5. Usar MediLogic
 
-npm run dev
+Abrir un navegador y acceder a: http://localhost:5173
 
-REGRESAR
+[REGRESAR](../README.md)

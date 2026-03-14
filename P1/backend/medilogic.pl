@@ -126,3 +126,13 @@ eliminar_enfermedad(Nombre) :-
     retractall(sintomas(Nombre, _)),
     retractall(medicamento(_, Nombre)),
     retractall(sistema(Nombre, _)).
+
+
+% enfermedad creada desde admin
+enfermedad(covid_19).
+sintomas(covid_19,fiebre).
+sintomas(covid_19,perdida_del_gusto).
+sintomas(covid_19,dolor_cabeza).
+medicamento(paracetamol,covid_19).
+medicamento(acetaminofen,covid_19).
+sistema(covid_19,respiratorio).
