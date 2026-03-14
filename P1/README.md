@@ -7,3 +7,4 @@
 3. [Manual de Usuario](Documentacion/usuario.md)  
 4. [Evaluación de coherencia diagnóstica](Documentacion/diagnostico.md)
 5. [¿Cómo correr la API?](Documentacion/api.md)
+6. [RPA](Documentacion/rpa.md)

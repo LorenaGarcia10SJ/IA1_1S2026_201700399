@@ -13,3 +13,11 @@ Medicamentos: levotiroxina
 Contraindicados: alergia_levotiroxina
 Sistema: endocrino
 Tipo: cronico
+
+Nombre: anemia
+Descripcion: disminucion de globulos rojos o hemoglobina en la sangre
+Sintomas: fatiga, palidez, mareos
+Medicamentos: hierro
+Contraindicados: alergia_hierro
+Sistema: circulatorio
+Tipo: hematologico
