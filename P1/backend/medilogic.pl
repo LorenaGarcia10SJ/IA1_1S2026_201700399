@@ -137,23 +137,3 @@ medicamento(paracetamol,covid_19).
 medicamento(acetaminofen,covid_19).
 sistema(covid_19,respiratorio).
 
-
-% enfermedad creada desde admin
-enfermedad(varicela).
-sintomas(varicela,fiebre).
-sintomas(varicela,sarpullido).
-sintomas(varicela,picazon).
-medicamento(paracetamol,varicela).
-sistema(varicela,inmunologico).
-
-contraindicado(paracetamol,alergia_paracetamol).
-
-
-% enfermedad creada desde admin
-enfermedad(hipotiroidismo).
-sintomas(hipotiroidismo,fatiga).
-sintomas(hipotiroidismo,aumento_peso).
-medicamento(levotiroxina,hipotiroidismo).
-sistema(hipotiroidismo,endocrino).
-
-contraindicado(levotiroxina,alergia_levotiroxina).
